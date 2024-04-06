@@ -9,7 +9,9 @@ import (
 )
 
 func CreateTimeTable(c *gin.Context) {
-	var req model.TTReq
+	year := c.Param("year")
+
+	var req []model.CreateTimeTable
 
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
@@ -17,7 +19,9 @@ func CreateTimeTable(c *gin.Context) {
 	}
 
 	tx := postgres.DB.Begin()
-	for _, tt := range req.ReqAll {
+	for _, tt := range req {
+		tt.Year = year
+		tt.Sem = "4"
 		if err := tx.Create(&tt).Error; err != nil {
 			tx.Rollback()
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create timetable"})
@@ -51,4 +55,19 @@ func GetTTbyYear(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"timetables": timetables})
+}
+
+func DeleteTimeTable(c *gin.Context) {
+	year := c.Param("year")
+
+	var timetable []model.CreateTimeTable
+
+	tx := postgres.DB.Begin()
+	if err := tx.Where("year = ?", year).Delete(&timetable).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to Delete timetables"})
+		return
+	}
+	tx.Commit()
+
+	c.JSON(http.StatusOK, gin.H{"error": "Timetable deleted successfully"})
 }

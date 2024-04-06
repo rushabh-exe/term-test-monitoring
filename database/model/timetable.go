@@ -7,8 +7,7 @@ type Class struct {
 	Capacity int64  `json:"capacity"`
 }
 
-type Req struct {
-	gorm.Model
+type DualAllocationReq struct {
 	Class1 Year    `json:"class1"`
 	Class2 Year    `json:"class2"`
 	Class  []Class `json:"class"`
@@ -16,12 +15,6 @@ type Req struct {
 type SingleAllocReq struct {
 	Class1 Year    `json:"class1"`
 	Class  []Class `json:"class"`
-}
-type SingleAllocReqArr struct {
-	ReqAll []SingleAllocReq `json:"reqAll"`
-}
-type ReqArr struct {
-	ReqAll []Req `json:"reqAll"`
 }
 
 type Year struct {
@@ -62,10 +55,6 @@ type CreateTimeTable struct {
 	Date       string `json:"date"`
 	Start_Time string `json:"start_time"`
 	End_Time   string `json:"end_time"`
-}
-
-type TTReq struct {
-	ReqAll []CreateTimeTable `json:"reqAll"`
 }
 
 type Main_Teachers struct {

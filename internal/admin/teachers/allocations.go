@@ -61,3 +61,17 @@ func GetTeacherAllocation(c *gin.Context) {
 
 	c.JSON(http.StatusOK, teacherAllocations)
 }
+
+func DeleteTeacherAllocation(c *gin.Context) {
+	id := c.Param("id")
+
+	var data model.TeacherAllocation
+
+	tx := postgres.DB.Begin()
+	if err := tx.Where("id = ?", id).Delete(&data).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in deleting DB"})
+		return
+	}
+	tx.Commit()
+	c.JSON(http.StatusOK, gin.H{"error": "Allocation Deleted successfully"})
+}

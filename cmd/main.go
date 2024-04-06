@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/hanshal101/term-test-monitor/database/postgres"
+	alloc_helper "github.com/hanshal101/term-test-monitor/helpers/alloc_helpers"
 	"github.com/hanshal101/term-test-monitor/helpers/auth"
 	"github.com/hanshal101/term-test-monitor/internal/admin"
 	students "github.com/hanshal101/term-test-monitor/internal/admin/students"
@@ -28,7 +29,7 @@ func main() {
 		adminGroup.PUT("/:year/:subject/:class", students.EditAttendence)
 		create := adminGroup.Group("/create")
 		{
-			create.POST("/timetable", admin.CreateTimeTable)
+			create.POST("/timetable/:year", admin.CreateTimeTable)
 			student := create.Group("/student")
 			{
 				student.POST("/dualAllocation", students.DualAllocation)
@@ -50,8 +51,11 @@ func main() {
 		{
 			get.GET("/timetable", admin.GetTT)
 			get.GET("/timetable/:Year", admin.GetTTbyYear)
+			get.DELETE("/timetable/:year", admin.DeleteTimeTable)
 			get.GET("/student/allocation", students.GetAllocation)
+			get.DELETE("/student/allocation/:id", students.DeleteAllocation)
 			get.GET("/teacher/allocation", teachers.GetTeacherAllocation)
+			get.DELETE("/teacher/allocation/:id", teachers.DeleteTeacherAllocation)
 		}
 	}
 
@@ -62,7 +66,12 @@ func main() {
 		teacherGroup.GET("/getAttendence", attendence.Test3)
 		teacherGroup.POST("/getAttendence", attendence.CreateAttendence)
 		teacherGroup.PUT("/getAttendence", attendence.EditAttendance)
+	}
 
+	api := r.Group("/api")
+	{
+		api.GET("/teachers", alloc_helper.GetTeachers)
+		api.GET("/classroom", alloc_helper.GetClass)
 	}
 
 	r.Run(":3001")

@@ -13,14 +13,14 @@ import (
 )
 
 func DualAllocation(c *gin.Context) {
-	var reqArr model.ReqArr
+	var reqArr []model.DualAllocationReq
 	if err := c.BindJSON(&reqArr); err != nil {
 		log.Fatalf("Error in Binding")
 	}
 
 	result := []model.AllocationResult{}
 
-	for _, req := range reqArr.ReqAll {
+	for _, req := range reqArr {
 		totalCapacity := 0
 		for _, cap := range req.Class {
 			totalCapacity += int(cap.Capacity)
@@ -71,20 +71,18 @@ func GetAllocation(c *gin.Context) {
 		return
 	}
 
-	print(response)
-
 	c.JSON(http.StatusOK, response)
 }
 
 func SingleAllocation(c *gin.Context) {
-	var reqArr model.SingleAllocReqArr
+	var reqArr []model.SingleAllocReq
 	if err := c.BindJSON(&reqArr); err != nil {
 		log.Fatalf("Error in Binding")
 	}
 
 	result := []model.AllocationResult{}
 
-	for _, req := range reqArr.ReqAll {
+	for _, req := range reqArr {
 		totalCapacity := 0
 		for _, cap := range req.Class {
 			totalCapacity += int(cap.Capacity)
@@ -118,4 +116,17 @@ func SingleAllocation(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+func DeleteAllocation(c *gin.Context) {
+	id := c.Param("id")
+	var data model.AllocationResult
+	tx := postgres.DB.Begin()
+	if err := tx.Where("id = ?", id).Delete(&data).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in deleting DB"})
+		return
+	}
+	tx.Commit()
+
+	c.JSON(http.StatusOK, gin.H{"error": "Allocation Deleted"})
 }
