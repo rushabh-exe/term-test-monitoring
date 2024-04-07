@@ -45,6 +45,10 @@ func main() {
 				vital.GET("/:year", vitals.GetSubject)
 				vital.POST("/:year", vitals.CreateSubject)
 				vital.DELETE("/:year/:subject", vitals.DeleteSubject)
+				vital.GET("/teachers/:type", vitals.GetTeachers)
+				vital.POST("/createTeacher", vitals.CreateTeacher)
+				vital.PUT("/teachers/:type", vitals.EditTeacher)
+				vital.DELETE("/teachers/:type/:email", vitals.DeleteTeacher)
 			}
 		}
 		get := adminGroup.Group("/get")

@@ -56,7 +56,6 @@ type CreateTimeTable struct {
 	Start_Time string `json:"start_time"`
 	End_Time   string `json:"end_time"`
 }
-
 type Main_Teachers struct {
 	gorm.Model
 	Name  string `json:"name"`
