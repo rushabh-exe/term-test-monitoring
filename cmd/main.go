@@ -12,6 +12,7 @@ import (
 	"github.com/hanshal101/term-test-monitor/internal/admin/vitals"
 	"github.com/hanshal101/term-test-monitor/internal/teacher"
 	"github.com/hanshal101/term-test-monitor/internal/teacher/attendence"
+	middleware "github.com/hanshal101/term-test-monitor/middleware/auth"
 )
 
 func init() {
@@ -64,6 +65,7 @@ func main() {
 	}
 
 	teacherGroup := r.Group("/teacher")
+	teacherGroup.Use(middleware.TeacherAuthMiddleware())
 	{
 		teacherGroup.GET("/", teacher.BaseGET)
 		teacherGroup.POST("/login", auth.IsTeacher, Generic)
