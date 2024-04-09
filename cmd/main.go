@@ -65,10 +65,10 @@ func main() {
 	}
 
 	teacherGroup := r.Group("/teacher")
+	teacherGroup.POST("/login", auth.IsTeacherAuth)
 	teacherGroup.Use(middleware.TeacherAuthMiddleware())
 	{
 		teacherGroup.GET("/", teacher.BaseGET)
-		teacherGroup.POST("/login", auth.IsTeacher, Generic)
 		teacherGroup.GET("/getAttendence", attendence.Test3)
 		teacherGroup.POST("/getAttendence", attendence.CreateAttendence)
 		teacherGroup.PUT("/getAttendence", attendence.EditAttendance)

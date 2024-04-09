@@ -1,4 +1,4 @@
-package teacher_auth
+package auth
 
 import (
 	"encoding/base64"
@@ -18,7 +18,7 @@ type authReq struct {
 	Email string `json:"email"`
 }
 
-func Auth(c *gin.Context) {
+func IsTeacherAuth(c *gin.Context) {
 	var req authReq
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in Binding"})
@@ -35,7 +35,6 @@ func Auth(c *gin.Context) {
 		return
 	}
 	encode := base64.StdEncoding.EncodeToString(jsonData)
-
 	resp := authResp{
 		TeacherData: encode,
 	}
