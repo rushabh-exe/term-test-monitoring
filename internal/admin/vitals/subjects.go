@@ -19,8 +19,9 @@ func GetSubject(c *gin.Context) {
 	var res []model.Subject
 	tx := postgres.DB.Begin()
 	if err := tx.Where("year = ?", year).Find(&res).Error; err != nil {
-		fmt.Fprintf(os.Stderr, "Error : ", err)
+		fmt.Fprintf(os.Stderr, "Error : %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in getting subjects"})
+		return
 	}
 	tx.Commit()
 	c.JSON(http.StatusOK, res)
@@ -44,7 +45,8 @@ func CreateSubject(c *gin.Context) {
 	}
 	tx := postgres.DB.Begin()
 	if err := tx.Create(&subject).Error; err != nil {
-		fmt.Fprintf(os.Stderr, "Error : ", err)
+		fmt.Fprintf(os.Stderr, "Error : %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in creating subject"})
 		return
 	}
 	tx.Commit()

@@ -318,12 +318,12 @@ type Attendence_Models struct {
 func CreateAttendence(c *gin.Context) {
 	var attendence_req []model.Attendence_Models
 	if err := c.BindJSON(&attendence_req); err != nil {
-		fmt.Fprintf(os.Stderr, "Error in binding :\n", err)
+		fmt.Fprintf(os.Stderr, "Error in binding : %v\n", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in json format"})
 	}
 	tx := postgres.DB.Begin()
 	if err := tx.Create(&attendence_req).Error; err != nil {
-		fmt.Fprintf(os.Stderr, "Error in binding :\n", err)
+		fmt.Fprintf(os.Stderr, "Error in binding : %v\n", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in creating attendence"})
 	}
 	tx.Commit()
