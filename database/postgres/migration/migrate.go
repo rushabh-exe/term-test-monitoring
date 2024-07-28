@@ -20,4 +20,5 @@ func main() {
 	postgres.DB.AutoMigrate(&model.AttendanceModel{})
 	postgres.DB.AutoMigrate(&model.Attendence_Models{})
 	postgres.DB.AutoMigrate(&model.Subject{})
+	postgres.DB.AutoMigrate(&model.PaperModel{})
 }

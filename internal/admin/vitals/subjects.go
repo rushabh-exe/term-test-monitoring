@@ -20,7 +20,7 @@ func GetSubject(c *gin.Context) {
 	tx := postgres.DB.Begin()
 	if err := tx.Where("year = ?", year).Find(&res).Error; err != nil {
 		fmt.Fprintf(os.Stderr, "Error : ", err)
-		c.Abort()
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in getting subjects"})
 	}
 	tx.Commit()
 	c.JSON(http.StatusOK, res)

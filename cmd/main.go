@@ -12,6 +12,7 @@ import (
 	"github.com/hanshal101/term-test-monitor/internal/admin/vitals"
 	"github.com/hanshal101/term-test-monitor/internal/teacher"
 	"github.com/hanshal101/term-test-monitor/internal/teacher/attendence"
+	"github.com/hanshal101/term-test-monitor/internal/teacher/papers"
 )
 
 func init() {
@@ -38,6 +39,7 @@ func main() {
 			teacher := create.Group("/teacher")
 			{
 				teacher.POST("/allocation", teachers.CreateTeacherAllocation)
+				teacher.POST("/teacher/papers/:reqID/:req", teachers.MakePaperRequests)
 			}
 			vital := create.Group("/vitals")
 			{
@@ -60,6 +62,7 @@ func main() {
 			get.DELETE("/student/allocation/:id", students.DeleteAllocation)
 			get.GET("/teacher/allocation", teachers.GetTeacherAllocation)
 			get.DELETE("/teacher/allocation/:id", teachers.DeleteTeacherAllocation)
+			get.GET("/teacher/papers", teachers.GetPaperRequests)
 		}
 	}
 
@@ -71,6 +74,9 @@ func main() {
 		teacherGroup.GET("/getAttendence", attendence.Test3)
 		teacherGroup.POST("/getAttendence", attendence.CreateAttendence)
 		teacherGroup.PUT("/getAttendence", attendence.EditAttendance)
+		teacherGroup.GET("/papers", papers.GetPaperRequest)
+		teacherGroup.POST("/papers", papers.CreatePaperRequest)
+		teacherGroup.DELETE("/papers/:reqID", papers.DeletePaperRequest)
 	}
 
 	api := r.Group("/api")

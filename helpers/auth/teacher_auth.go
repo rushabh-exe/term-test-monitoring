@@ -40,3 +40,18 @@ func IsTeacherAuth(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, resp)
 }
+
+func GetTeacher(c *gin.Context) (model.Main_Teachers, error) {
+	var teacher model.Main_Teachers
+
+	email, err := c.Cookie("teacherData")
+	if err != nil {
+		return teacher, err
+	}
+
+	if err = postgres.DB.Where("email = ?", email).Find(&teacher).Error; err != nil {
+		return teacher, err
+	}
+
+	return teacher, nil
+}

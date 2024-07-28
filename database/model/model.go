@@ -141,3 +141,12 @@ type Subject struct {
 	Sem  int    `json"sem"`
 	Name string `json:"name"`
 }
+
+// PAPER REQUESTS MODELS
+type PaperModel struct {
+	gorm.Model
+	TeacherName string `json:"teacher_name"`
+	Request     bool   `json:"request"`
+	Description string `json:"description"`
+	Status      bool   `json:"status"`
+}
