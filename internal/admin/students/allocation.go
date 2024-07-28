@@ -12,55 +12,140 @@ import (
 	allocate "github.com/hanshal101/term-test-monitor/helpers/Allocation"
 )
 
+// func DualAllocation(c *gin.Context) {
+// 	var reqArr []model.DualAllocationReq
+// 	if err := c.BindJSON(&reqArr); err != nil {
+// 		log.Fatalf("Error in Binding")
+// 	}
+
+// 	result := []model.AllocationResult{}
+
+// 	for _, req := range reqArr {
+// 		totalCapacity := 0
+// 		for _, cap := range req.Class {
+// 			totalCapacity += int(cap.Capacity)
+// 		}
+
+// 		max_no := math.Max(float64(req.Class1.Strength), float64(req.Class2.Strength))
+// 		if max_no > float64(totalCapacity) {
+// 			c.JSON(http.StatusBadRequest, gin.H{"error": "Insufficient Space"})
+// 		}
+
+// 		roomRollNo := 1
+// 		tx := postgres.DB.Begin()
+
+// 		for i, class := range req.Class {
+// 			result = append(result, model.AllocationResult{
+// 				ClassRoom: class.Room,
+// 				ClassName: req.Class1.Name,
+// 				Start:     int64(roomRollNo),
+// 				End:       allocate.Allot(req.Class1.Strength, class.Capacity, i),
+// 			})
+// 			result = append(result, model.AllocationResult{
+// 				ClassRoom: class.Room,
+// 				ClassName: req.Class2.Name,
+// 				Start:     int64(roomRollNo),
+// 				End:       allocate.Allot(req.Class2.Strength, class.Capacity, i),
+// 			})
+
+// 			roomRollNo += int(class.Capacity)
+// 		}
+
+// 		if err := tx.Create(&result).Error; err != nil {
+// 			tx.Rollback()
+// 			fmt.Printf("Error : %v\n", err)
+// 			return
+// 		}
+
+// 		tx.Commit()
+// 	}
+
+//		c.JSON(http.StatusOK, result)
+//	}
+func Allocate(strength int, capacity int, index int) int64 {
+	allocated := min(strength, capacity)
+	return int64(index*capacity + allocated)
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 func DualAllocation(c *gin.Context) {
 	var reqArr []model.DualAllocationReq
 	if err := c.BindJSON(&reqArr); err != nil {
-		log.Fatalf("Error in Binding")
+		log.Fatalf("Error in Binding: %v", err)
 	}
 
-	result := []model.AllocationResult{}
+	var results []model.AllocationResult
 
 	for _, req := range reqArr {
 		totalCapacity := 0
-		for _, cap := range req.Class {
-			totalCapacity += int(cap.Capacity)
+		for _, class := range req.Class {
+			totalCapacity += int(class.Capacity)
 		}
 
-		max_no := math.Max(float64(req.Class1.Strength), float64(req.Class2.Strength))
-		if max_no > float64(totalCapacity) {
+		maxStrength := math.Max(float64(req.Class1.Strength), float64(req.Class2.Strength))
+		if maxStrength > float64(totalCapacity) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Insufficient Space"})
+			return
 		}
 
-		roomRollNo := 1
+		classARollNo, classBRollNo := 1, 1
 		tx := postgres.DB.Begin()
 
 		for i, class := range req.Class {
-			result = append(result, model.AllocationResult{
-				ClassRoom: class.Room,
-				ClassName: req.Class1.Name,
-				Start:     int64(roomRollNo),
-				End:       allocate.Allot(req.Class1.Strength, class.Capacity, i),
-			})
-			result = append(result, model.AllocationResult{
-				ClassRoom: class.Room,
-				ClassName: req.Class2.Name,
-				Start:     int64(roomRollNo),
-				End:       allocate.Allot(req.Class2.Strength, class.Capacity, i),
-			})
+			classAEnd := Allocate(int(req.Class1.Strength), int(class.Capacity), i)
+			if classARollNo <= int(req.Class1.Strength) {
+				results = append(results, model.AllocationResult{
+					ClassRoom: class.Room,
+					ClassName: req.Class1.Name,
+					Start:     int64(classARollNo),
+					End:       classAEnd,
+				})
+				classARollNo += min(int(req.Class1.Strength), int(class.Capacity))
+			} else {
+				results = append(results, model.AllocationResult{
+					ClassRoom: class.Room,
+					ClassName: req.Class1.Name,
+					Start:     0,
+					End:       0,
+				})
+			}
 
-			roomRollNo += int(class.Capacity)
+			classBEnd := Allocate(int(req.Class2.Strength), int(class.Capacity), i)
+			if classBRollNo <= int(req.Class2.Strength) {
+				results = append(results, model.AllocationResult{
+					ClassRoom: class.Room,
+					ClassName: req.Class2.Name,
+					Start:     int64(classBRollNo),
+					End:       classBEnd,
+				})
+				classBRollNo += min(int(req.Class2.Strength), int(class.Capacity))
+			} else {
+				results = append(results, model.AllocationResult{
+					ClassRoom: class.Room,
+					ClassName: req.Class2.Name,
+					Start:     0,
+					End:       0,
+				})
+			}
 		}
 
-		if err := tx.Create(&result).Error; err != nil {
+		if err := tx.Create(&results).Error; err != nil {
 			tx.Rollback()
 			fmt.Printf("Error : %v\n", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save allocation results"})
 			return
 		}
 
 		tx.Commit()
 	}
 
-	c.JSON(http.StatusOK, result)
+	c.JSON(http.StatusOK, results)
 }
 
 func GetAllocation(c *gin.Context) {

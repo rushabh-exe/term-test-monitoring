@@ -62,6 +62,13 @@ type Main_Teachers struct {
 	Email string `json:"email"`
 	Phone string `json:"phno"`
 }
+
+type Teachers struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Phone string `json:"phno"`
+}
+
 type Co_Teachers struct {
 	gorm.Model
 	Name  string `json:"name"`

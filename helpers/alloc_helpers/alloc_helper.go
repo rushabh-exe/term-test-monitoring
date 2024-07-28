@@ -38,19 +38,12 @@ func GetTeachers(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-func GetClass(c *gin.Context) {
-	var response []model.AllocationResult
+func GetClass() (response []model.AllocationResult) {
 	if err := postgres.DB.Select("DISTINCT class_room").Find(&response).Error; err != nil {
 		log.Fatalf("Error in extraction of alloc: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch allocation results"})
-		return
+		// c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch allocation results"})
+		return nil
 	}
-
-	classrooms := make([]string, len(response))
-	for i, res := range response {
-		classrooms[i] = res.ClassRoom
-	}
-
-	c.JSON(http.StatusOK, gin.H{"classroom": classrooms})
-
+	// c.JSON(http.StatusOK, gin.H{"classroom": classrooms})
+	return response
 }

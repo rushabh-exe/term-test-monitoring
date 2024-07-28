@@ -228,12 +228,16 @@ type Result_2 struct {
 // }
 
 func Test3(c *gin.Context) {
-	teacher_name := "John Doe"
+	teacher_name := "Test"
 	var teacher_allocations []model.TeacherAllocation
 	tx := postgres.DB.Begin()
 	if err := tx.Where("main_teacher = ?", teacher_name).Find(&teacher_allocations).Error; err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		return
 	}
+
+	fmt.Println(len(teacher_allocations))
+
 	var teacher_timetable []model.CreateTimeTable
 	var result []Result_2
 	validSuffixes := map[string][]string{
@@ -241,6 +245,7 @@ func Test3(c *gin.Context) {
 		"TY": {"A", "B"},
 		"LY": {"A", "B"},
 	}
+
 	for _, t_alloc := range teacher_allocations {
 		if err := tx.Where("date = ? AND start_time = ? AND end_time = ?", t_alloc.Date, t_alloc.Start_Time, t_alloc.End_Time).Find(&teacher_timetable).Error; err != nil {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)

@@ -1,6 +1,7 @@
 package vitals
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,11 +16,15 @@ func GetTeachers(c *gin.Context) {
 	tx := postgres.DB.Begin()
 	switch teacherType {
 	case "teachingStaff":
+		// var mainTeachers []model.Main_Teachers
 		if err := tx.Find(&data).Error; err != nil {
 			tx.Rollback()
 			c.JSON(500, gin.H{"error": "Failed to fetch teaching staff"})
 			return
 		}
+		// for _, teacher := range mainTeachers {
+		// 	data = append(data, model.Teachers{Name: teacher.Name, Email: teacher.Email, Phone: teacher.Phone})
+		// }
 	case "nonteachingStaff":
 		var coTeachers []model.Co_Teachers
 		if err := tx.Find(&coTeachers).Error; err != nil {
@@ -27,9 +32,16 @@ func GetTeachers(c *gin.Context) {
 			c.JSON(500, gin.H{"error": "Failed to fetch non-teaching staff"})
 			return
 		}
+		// for _, teacher := range coTeachers {
+		// 	data = append(data, model.Teachers{Name: teacher.Name, Email: teacher.Email, Phone: teacher.Phone})
+		// }
 	default:
 		c.JSON(400, gin.H{"error": "Invalid teacher type"})
 		return
+	}
+
+	if len(data) < 1 {
+		fmt.Println("data not present")
 	}
 
 	tx.Commit()
@@ -49,10 +61,15 @@ func CreateTeacher(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in Binding"})
 		return
 	}
+	fmt.Println(req.Name)
+	fmt.Println(req.Email)
+	fmt.Println(req.Phone)
+	fmt.Println(req.Type)
 	teacher_type := req.Type
 	tx := postgres.DB.Begin()
 	switch teacher_type {
-	case "TeachingStaff":
+	case "Teaching":
+		fmt.Println("entered teaching staff")
 		var data model.Main_Teachers
 		data.Name = req.Name
 		data.Email = req.Email
@@ -61,7 +78,7 @@ func CreateTeacher(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "error in creating teacher"})
 			return
 		}
-	case "NonTeachingStaff":
+	case "Non Teaching":
 		var data model.Co_Teachers
 		data.Name = req.Name
 		data.Email = req.Email
@@ -70,12 +87,12 @@ func CreateTeacher(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "error in creating teacher"})
 			return
 		}
-
-		c.JSON(http.StatusOK, gin.H{"error": "teacher created successfully"})
 	}
+	tx.Commit()
+	c.JSON(http.StatusOK, gin.H{"error": "teacher created successfully"})
 }
 func EditTeacher(c *gin.Context) {
-	var req []reqTeacher
+	var req reqTeacher
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in Binding"})
 		return
@@ -84,43 +101,39 @@ func EditTeacher(c *gin.Context) {
 	tx := postgres.DB.Begin()
 	switch teacherType {
 	case "teachingStaff":
-		for _, r := range req {
-			var data model.Main_Teachers
-			if err := tx.First(&data, "email = ?", r.Email).Error; err != nil {
-				tx.Rollback()
-				c.JSON(http.StatusBadRequest, gin.H{"error": "teacher not found"})
-				return
-			}
-			data.Name = r.Name
-			data.Phone = r.Phone
-			if err := tx.Save(&data).Error; err != nil {
-				tx.Rollback()
-				c.JSON(http.StatusBadRequest, gin.H{"error": "error in updating teacher"})
-				return
-			}
+		var data model.Main_Teachers
+		if err := tx.First(&data, "email = ?", req.Email).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "teacher not found"})
+			return
+		}
+		data.Name = req.Name
+		data.Phone = req.Phone
+		if err := tx.Save(&data).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "error in updating teacher"})
+			return
 		}
 	case "nonteachingStaff":
-		for _, r := range req {
-			var data model.Co_Teachers
-			if err := tx.First(&data, "email = ?", r.Email).Error; err != nil {
-				tx.Rollback()
-				c.JSON(http.StatusBadRequest, gin.H{"error": "teacher not found"})
-				return
-			}
-			data.Name = r.Name
-			data.Phone = r.Phone
-			if err := tx.Save(&data).Error; err != nil {
-				tx.Rollback()
-				c.JSON(http.StatusBadRequest, gin.H{"error": "error in updating teacher"})
-				return
-			}
+		var data model.Co_Teachers
+		if err := tx.First(&data, "email = ?", req.Email).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "teacher not found"})
+			return
+		}
+		data.Name = req.Name
+		data.Phone = req.Phone
+		if err := tx.Save(&data).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "error in updating teacher"})
+			return
 		}
 	default:
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid teacher type"})
 		return
 	}
-
 	tx.Commit()
+
 	c.JSON(http.StatusOK, gin.H{"message": "teacher updated successfully"})
 }
 

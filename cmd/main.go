@@ -12,7 +12,6 @@ import (
 	"github.com/hanshal101/term-test-monitor/internal/admin/vitals"
 	"github.com/hanshal101/term-test-monitor/internal/teacher"
 	"github.com/hanshal101/term-test-monitor/internal/teacher/attendence"
-	middleware "github.com/hanshal101/term-test-monitor/middleware/auth"
 )
 
 func init() {
@@ -66,7 +65,7 @@ func main() {
 
 	teacherGroup := r.Group("/teacher")
 	teacherGroup.POST("/login", auth.IsTeacherAuth)
-	teacherGroup.Use(middleware.TeacherAuthMiddleware())
+	// teacherGroup.Use(middleware.TeacherAuthMiddleware())
 	{
 		teacherGroup.GET("/", teacher.BaseGET)
 		teacherGroup.GET("/getAttendence", attendence.Test3)
@@ -77,7 +76,7 @@ func main() {
 	api := r.Group("/api")
 	{
 		api.GET("/teachers", alloc_helper.GetTeachers)
-		api.GET("/classroom", alloc_helper.GetClass)
+		// api.GET("/classroom", alloc_helper.GetClass)
 	}
 
 	r.Run(":3001")
