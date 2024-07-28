@@ -150,3 +150,10 @@ type PaperModel struct {
 	Description string `json:"description"`
 	Status      bool   `json:"status"`
 }
+
+type DQCMembers struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Phone    string `json:"phone"`
+}

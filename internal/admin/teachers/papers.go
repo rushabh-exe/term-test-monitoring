@@ -21,8 +21,13 @@ func MakePaperRequests(c *gin.Context) {
 	reqID := c.Param("reqID")
 	req := c.Param("req")
 	var rq = false
-	if req == "true" {
+	switch req {
+	case "true":
 		rq = true
+	case "false":
+		rq = false
+	default:
+		rq = false
 	}
 
 	var paperRequest model.PaperModel

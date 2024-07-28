@@ -39,7 +39,7 @@ func main() {
 			teacher := create.Group("/teacher")
 			{
 				teacher.POST("/allocation", teachers.CreateTeacherAllocation)
-				teacher.POST("/teacher/papers/:reqID/:req", teachers.MakePaperRequests)
+				teacher.POST("/papers/:reqID/:req", teachers.MakePaperRequests)
 			}
 			vital := create.Group("/vitals")
 			{
@@ -85,7 +85,17 @@ func main() {
 		// api.GET("/classroom", alloc_helper.GetClass)
 	}
 
-	r.Run(":3001")
+	dqc := r.Group("/dqc")
+	{
+		dqc.GET("/", func(c *gin.Context) { c.String(200, "You are at DQC routes") })
+		// dqc.POST("/login")
+		// dqc.GET("/timeline")
+		// dqc.GET("/requests")
+		// dqc.GET("/requests/:reqID")
+		// dqc.POST("/requests/:reqID")
+	}
+
+	r.Run(":3000")
 }
 
 func Generic(c *gin.Context) {

@@ -39,6 +39,7 @@ func CreatePaperRequest(c *gin.Context) {
 	}
 	paperRequest.Request = false
 	paperRequest.Status = false
+	paperRequest.TeacherName = teacher.Name
 
 	tx := postgres.DB.Begin()
 	if err = tx.Create(&paperRequest).Error; err != nil {
