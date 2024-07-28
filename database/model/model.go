@@ -151,9 +151,24 @@ type PaperModel struct {
 	Status      bool   `json:"status"`
 }
 
+// DQC Members
 type DQCMembers struct {
+	gorm.Model
 	Name     string `json:"name"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 	Phone    string `json:"phone"`
+}
+
+type DQCReview struct {
+	gorm.Model
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Subject  string `json:"subject"`
+	Year     string `json:"year"`
+	Semester string `json:"semester"`
+	QPLink   string `json:"qplink"`
+	APLink   string `json:"aplink"`
+	Request  bool   `json:"request"`
+	Status   bool   `json:"status"`
 }

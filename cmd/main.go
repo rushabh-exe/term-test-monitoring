@@ -7,11 +7,13 @@ import (
 	alloc_helper "github.com/hanshal101/term-test-monitor/helpers/alloc_helpers"
 	"github.com/hanshal101/term-test-monitor/helpers/auth"
 	"github.com/hanshal101/term-test-monitor/internal/admin"
+	"github.com/hanshal101/term-test-monitor/internal/admin/dqc"
 	students "github.com/hanshal101/term-test-monitor/internal/admin/students"
 	"github.com/hanshal101/term-test-monitor/internal/admin/teachers"
 	"github.com/hanshal101/term-test-monitor/internal/admin/vitals"
 	"github.com/hanshal101/term-test-monitor/internal/teacher"
 	"github.com/hanshal101/term-test-monitor/internal/teacher/attendence"
+	dqcT "github.com/hanshal101/term-test-monitor/internal/teacher/dqc"
 	"github.com/hanshal101/term-test-monitor/internal/teacher/papers"
 )
 
@@ -77,6 +79,9 @@ func main() {
 		teacherGroup.GET("/papers", papers.GetPaperRequest)
 		teacherGroup.POST("/papers", papers.CreatePaperRequest)
 		teacherGroup.DELETE("/papers/:reqID", papers.DeletePaperRequest)
+		teacherGroup.GET("/dqc/reviews", dqcT.GetReviewRequest)
+		teacherGroup.POST("/dqc/reviews", dqcT.CreateDQCReview)
+		teacherGroup.DELETE("/dqc/reviews/:reqID", dqcT.DeleteDQCReview)
 	}
 
 	api := r.Group("/api")
@@ -85,14 +90,14 @@ func main() {
 		// api.GET("/classroom", alloc_helper.GetClass)
 	}
 
-	dqc := r.Group("/dqc")
+	dqcGroup := r.Group("/dqc")
 	{
-		dqc.GET("/", func(c *gin.Context) { c.String(200, "You are at DQC routes") })
+		dqcGroup.GET("/", func(c *gin.Context) { c.String(200, "You are at DQC routes") })
 		// dqc.POST("/login")
+		dqcGroup.GET("/requests", dqc.GetReviews)
+		dqcGroup.GET("/requests/:reqID", dqc.GetReviewbyID)
+		dqcGroup.POST("/requests/:reqID", dqc.MakeReviewRequest)
 		// dqc.GET("/timeline")
-		// dqc.GET("/requests")
-		// dqc.GET("/requests/:reqID")
-		// dqc.POST("/requests/:reqID")
 	}
 
 	r.Run(":3000")
