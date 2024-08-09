@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/hanshal101/term-test-monitor/database/postgres"
+	migrate "github.com/hanshal101/term-test-monitor/database/postgres/migration"
 	alloc_helper "github.com/hanshal101/term-test-monitor/helpers/alloc_helpers"
 	"github.com/hanshal101/term-test-monitor/helpers/auth"
 	"github.com/hanshal101/term-test-monitor/internal/admin"
@@ -20,6 +21,7 @@ import (
 
 func init() {
 	postgres.PostgresInitializer()
+	migrate.Migrate()
 }
 
 func main() {
@@ -92,9 +94,10 @@ func main() {
 	}
 
 	dqcGroup := r.Group("/dqc")
+	dqcGroup.POST("/login", auth.IsDqcAuth)
+	dqcGroup.Use(middleware.DQCAuthMiddleware())
 	{
 		dqcGroup.GET("/", func(c *gin.Context) { c.String(200, "You are at DQC routes") })
-		// dqc.POST("/login")
 		dqcGroup.GET("/requests", dqc.GetReviews)
 		dqcGroup.GET("/requests/:reqID", dqc.GetReviewbyID)
 		dqcGroup.POST("/requests/:reqID", dqc.MakeReviewRequest)

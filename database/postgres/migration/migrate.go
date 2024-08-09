@@ -1,4 +1,4 @@
-package main
+package migrate
 
 import (
 	"github.com/hanshal101/term-test-monitor/database/model"
@@ -9,7 +9,7 @@ func init() {
 	postgres.PostgresInitializer()
 }
 
-func main() {
+func Migrate() {
 	postgres.DB.AutoMigrate(&model.AllocationResult{})
 	postgres.DB.AutoMigrate(&model.StudentsDB{})
 	postgres.DB.AutoMigrate(&model.CreateTimeTable{})

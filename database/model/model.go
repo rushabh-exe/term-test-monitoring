@@ -171,4 +171,9 @@ type DQCReview struct {
 	APLink   string `json:"aplink"`
 	Request  bool   `json:"request"`
 	Status   bool   `json:"status"`
+	Approver uint   `json:"approver"`
+}
+
+type EAuthReq struct {
+	Email string `json:"email"`
 }

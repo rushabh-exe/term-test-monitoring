@@ -1,6 +1,7 @@
 package dqc
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -9,8 +10,22 @@ import (
 )
 
 func GetReviews(c *gin.Context) {
+	// dqcData, exists := c.Get("dqcData")
+	// if !exists {
+	// 	c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization data found"})
+	// 	return
+	// }
+
+	// // Type assert the retrieved data to model.DQCMembers
+	// dqc, ok := dqcData.(model.DQCMembers)
+	// if !ok {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse authorization data"})
+	// 	return
+	// }
+
 	var response []model.DQCReview
 	if err := postgres.DB.Find(&response).Error; err != nil {
+		fmt.Println("error: %s", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in getting reviews"})
 		return
 	}
@@ -30,6 +45,18 @@ func GetReviewbyID(c *gin.Context) {
 }
 
 func MakeReviewRequest(c *gin.Context) {
+	dqcData, exists := c.Get("dqcData")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization data found"})
+		return
+	}
+
+	dqc, ok := dqcData.(model.DQCMembers)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse authorization data"})
+		return
+	}
+
 	reqID := c.Param("reqID")
 	req := c.Param("req")
 	var rq = false
@@ -51,6 +78,7 @@ func MakeReviewRequest(c *gin.Context) {
 	}
 	reviewRequest.Request = rq
 	reviewRequest.Status = true
+	reviewRequest.Approver = dqc.ID
 
 	if err := tx.Save(&reviewRequest).Error; err != nil {
 		tx.Rollback()

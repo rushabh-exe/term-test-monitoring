@@ -13,15 +13,11 @@ import (
 )
 
 type authResp struct {
-	TeacherData string `json:"teacherData"`
-}
-
-type authReq struct {
-	Email string `json:"email"`
+	Cookie string `json:"cookie"`
 }
 
 func IsTeacherAuth(c *gin.Context) {
-	var req authReq
+	var req model.EAuthReq
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in Binding"})
 		return
@@ -37,10 +33,10 @@ func IsTeacherAuth(c *gin.Context) {
 		return
 	}
 	encode := base64.StdEncoding.EncodeToString(jsonData)
-	resp := authResp{
-		TeacherData: encode,
-	}
-	c.JSON(http.StatusOK, resp)
+
+	c.JSON(http.StatusOK, authResp{
+		Cookie: encode,
+	})
 }
 
 func GetTeacher(c *gin.Context) (model.Main_Teachers, error) {

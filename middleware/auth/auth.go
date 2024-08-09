@@ -8,14 +8,8 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hanshal101/term-test-monitor/database/model"
 )
-
-// TeacherData represents the structure of the teacher data stored in the cookie
-type TeacherData struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	Phone string `json:"phone"`
-}
 
 func TeacherAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -31,7 +25,7 @@ func TeacherAuthMiddleware() gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Decoding error"})
 			return
 		}
-		var teacher TeacherData
+		var teacher model.Main_Teachers
 		if err := json.Unmarshal([]byte(decodedData), &teacher); err != nil {
 			fmt.Fprintf(os.Stderr, "Error : %v", err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid cookie data"})
@@ -39,6 +33,34 @@ func TeacherAuthMiddleware() gin.HandlerFunc {
 		}
 		c.Set("teacherData", teacher)
 
+		c.Next()
+	}
+}
+
+func DQCAuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		cookie, err := c.Request.Cookie("dqcData")
+		if err != nil {
+			fmt.Printf("error : %v", err)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Cookie fetch error"})
+			return
+		}
+
+		decodedData, err := base64.StdEncoding.DecodeString(cookie.Value)
+		if err != nil {
+			fmt.Println("Error decoding base64 data:", err)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Decoding error"})
+			return
+		}
+
+		var dqc model.DQCMembers
+		if err := json.Unmarshal([]byte(decodedData), &dqc); err != nil {
+			fmt.Fprintf(os.Stderr, "Error : %v", err)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid cookie data"})
+			return
+		}
+
+		c.Set("dqcData", dqc)
 		c.Next()
 	}
 }
