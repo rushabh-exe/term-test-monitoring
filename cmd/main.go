@@ -15,6 +15,7 @@ import (
 	"github.com/hanshal101/term-test-monitor/internal/teacher/attendence"
 	dqcT "github.com/hanshal101/term-test-monitor/internal/teacher/dqc"
 	"github.com/hanshal101/term-test-monitor/internal/teacher/papers"
+	middleware "github.com/hanshal101/term-test-monitor/middleware/auth"
 )
 
 func init() {
@@ -70,7 +71,7 @@ func main() {
 
 	teacherGroup := r.Group("/teacher")
 	teacherGroup.POST("/login", auth.IsTeacherAuth)
-	// teacherGroup.Use(middleware.TeacherAuthMiddleware())
+	teacherGroup.Use(middleware.TeacherAuthMiddleware())
 	{
 		teacherGroup.GET("/", teacher.BaseGET)
 		teacherGroup.GET("/getAttendence", attendence.Test3)
@@ -100,7 +101,7 @@ func main() {
 		// dqc.GET("/timeline")
 	}
 
-	r.Run(":3000")
+	r.Run(":5051")
 }
 
 func Generic(c *gin.Context) {

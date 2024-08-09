@@ -3,7 +3,9 @@ package auth
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hanshal101/term-test-monitor/database/model"
@@ -44,13 +46,21 @@ func IsTeacherAuth(c *gin.Context) {
 func GetTeacher(c *gin.Context) (model.Main_Teachers, error) {
 	var teacher model.Main_Teachers
 
-	email, err := c.Cookie("teacherData")
+	cookie, err := c.Request.Cookie("teacherData")
 	if err != nil {
-		return teacher, err
+		fmt.Printf("error : %v", err)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Cookie fetch error"})
 	}
 
-	if err = postgres.DB.Where("email = ?", email).Find(&teacher).Error; err != nil {
-		return teacher, err
+	decodedData, err := base64.StdEncoding.DecodeString(cookie.Value)
+	if err != nil {
+		fmt.Println("Error decoding base64 data:", err)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Decoding error"})
+	}
+
+	if err := json.Unmarshal([]byte(decodedData), &teacher); err != nil {
+		fmt.Fprintf(os.Stderr, "Error : %v", err)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid cookie data"})
 	}
 
 	return teacher, nil
