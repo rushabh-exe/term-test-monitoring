@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/hanshal101/term-test-monitor/database/model"
 	"github.com/hanshal101/term-test-monitor/database/postgres"
+	"github.com/hanshal101/term-test-monitor/helpers/auth"
 )
 
 // func Test(c *gin.Context) {
@@ -162,6 +163,7 @@ type SubjectOut struct {
 type ST_Data struct {
 	Subject  string `json:"subject"`
 	Year     string `json:"year"`
+	Class    string `json:"class"`
 	Students []model.StudentsDB
 }
 
@@ -228,10 +230,14 @@ type Result_2 struct {
 // }
 
 func Test3(c *gin.Context) {
-	teacher_name := "Test"
+	teacher, err := auth.GetTeacher(c)
+	if err != nil {
+		fmt.Println("error in cookie")
+		return
+	}
 	var teacher_allocations []model.TeacherAllocation
 	tx := postgres.DB.Begin()
-	if err := tx.Where("main_teacher = ?", teacher_name).Find(&teacher_allocations).Error; err != nil {
+	if err := tx.Where("main_teacher = ?", teacher.Name).Find(&teacher_allocations).Error; err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		return
 	}
@@ -258,6 +264,7 @@ func Test3(c *gin.Context) {
 				fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 			}
 			var students []model.StudentsDB
+			var className string
 			for _, student := range t_st_alloc {
 				valid := false
 				for _, suffix := range validSuffixes[subjects.Year] {
@@ -273,11 +280,13 @@ func Test3(c *gin.Context) {
 				if err := tx.Where("class = ? AND roll_no BETWEEN ? AND ?", student.ClassName, student.Start, student.End).Find(&students).Error; err != nil {
 					fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 				}
+				className = student.ClassName
 			}
 			data := ST_Data{
 				Subject:  subjects.Subject,
 				Year:     subjects.Year,
 				Students: students,
+				Class:    className,
 			}
 			st_data = append(st_data, data)
 		}
@@ -300,26 +309,14 @@ func SendAttendence(c *gin.Context) {
 
 }
 
-type Attendence_Models struct {
-	M_Teacher  string `json:"m_teacher"`
-	C_Teacher  string `json:"c_teacher"`
-	Classroom  string `json:"class_room"`
-	Date       string `json:"date"`
-	Start_Time string `json:"start_time"`
-	End_Time   string `json:"end_time"`
-	Subject    string `json:"subject"`
-	Year       string `json:"year"`
-	Name       string `json:"name"`
-	RollNo     int    `json:"roll_no"`
-	Class      string `json:"class"`
-	IsPresent  bool   `json:"is_present"`
-}
-
 func CreateAttendence(c *gin.Context) {
 	var attendence_req []model.Attendence_Models
 	if err := c.BindJSON(&attendence_req); err != nil {
 		fmt.Fprintf(os.Stderr, "Error in binding : %v\n", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in json format"})
+	}
+	for _, re := range attendence_req {
+		fmt.Println(re.Name, re.IsPresent, re.RollNo)
 	}
 	tx := postgres.DB.Begin()
 	if err := tx.Create(&attendence_req).Error; err != nil {

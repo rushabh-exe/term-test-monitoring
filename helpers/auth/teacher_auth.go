@@ -24,7 +24,7 @@ func IsTeacherAuth(c *gin.Context) {
 	}
 	var data model.Main_Teachers
 	if err := postgres.DB.First(&data, "email = ?", req.Email).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "teacher not found"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "teacher not found"})
 		return
 	}
 	jsonData, err := json.Marshal(&data)
@@ -34,6 +34,8 @@ func IsTeacherAuth(c *gin.Context) {
 	}
 	encode := base64.StdEncoding.EncodeToString(jsonData)
 
+	c.SetCookie("teacherData", encode, 10, "/", "", true, true)
+
 	c.JSON(http.StatusOK, authResp{
 		Cookie: encode,
 	})
@@ -42,21 +44,24 @@ func IsTeacherAuth(c *gin.Context) {
 func GetTeacher(c *gin.Context) (model.Main_Teachers, error) {
 	var teacher model.Main_Teachers
 
-	cookie, err := c.Request.Cookie("teacherData")
+	cookie, err := c.Cookie("teacherData")
 	if err != nil {
 		fmt.Printf("error : %v", err)
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Cookie fetch error"})
+		return teacher, err
 	}
 
-	decodedData, err := base64.StdEncoding.DecodeString(cookie.Value)
+	decodedData, err := base64.StdEncoding.DecodeString(cookie)
 	if err != nil {
 		fmt.Println("Error decoding base64 data:", err)
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Decoding error"})
+		return teacher, err
 	}
 
 	if err := json.Unmarshal([]byte(decodedData), &teacher); err != nil {
 		fmt.Fprintf(os.Stderr, "Error : %v", err)
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid cookie data"})
+		return teacher, err
 	}
 
 	return teacher, nil

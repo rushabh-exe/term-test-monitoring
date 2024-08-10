@@ -28,6 +28,8 @@ func IsDqcAuth(c *gin.Context) {
 	}
 	encode := base64.StdEncoding.EncodeToString(jsonData)
 
+	c.SetCookie("dqcData", encode, 3600, "/", "", true, true)
+
 	c.JSON(http.StatusOK, authResp{
 		Cookie: encode,
 	})
