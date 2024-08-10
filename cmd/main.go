@@ -8,10 +8,10 @@ import (
 	alloc_helper "github.com/hanshal101/term-test-monitor/helpers/alloc_helpers"
 	"github.com/hanshal101/term-test-monitor/helpers/auth"
 	"github.com/hanshal101/term-test-monitor/internal/admin"
-	"github.com/hanshal101/term-test-monitor/internal/admin/dqc"
 	students "github.com/hanshal101/term-test-monitor/internal/admin/students"
 	"github.com/hanshal101/term-test-monitor/internal/admin/teachers"
 	"github.com/hanshal101/term-test-monitor/internal/admin/vitals"
+	"github.com/hanshal101/term-test-monitor/internal/dqc"
 	"github.com/hanshal101/term-test-monitor/internal/teacher"
 	"github.com/hanshal101/term-test-monitor/internal/teacher/attendence"
 	dqcT "github.com/hanshal101/term-test-monitor/internal/teacher/dqc"
@@ -108,7 +108,7 @@ func main() {
 		dqcGroup.GET("/", func(c *gin.Context) { c.String(200, "You are at DQC routes") })
 		dqcGroup.GET("/requests", dqc.GetReviews)
 		dqcGroup.GET("/requests/:reqID", dqc.GetReviewbyID)
-		dqcGroup.POST("/requests/:reqID", dqc.MakeReviewRequest)
+		dqcGroup.POST("/requests/:reqID/:req", dqc.MakeReviewRequest)
 		// dqc.GET("/timeline")
 	}
 

@@ -78,7 +78,7 @@ func MakeReviewRequest(c *gin.Context) {
 	}
 	reviewRequest.Request = rq
 	reviewRequest.Status = true
-	reviewRequest.Approver = dqc.ID
+	reviewRequest.Approver = dqc.Name
 
 	if err := tx.Save(&reviewRequest).Error; err != nil {
 		tx.Rollback()
