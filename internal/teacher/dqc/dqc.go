@@ -39,7 +39,7 @@ func CreateDQCReview(c *gin.Context) {
 	}
 
 	tx := postgres.DB.Begin()
-	req.Name = teacher.Phone
+	req.Name = teacher.Name
 	req.Email = teacher.Email
 	req.Request = false
 	req.Status = false
