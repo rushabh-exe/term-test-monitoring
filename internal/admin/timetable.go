@@ -10,7 +10,7 @@ import (
 
 func CreateTimeTable(c *gin.Context) {
 	year := c.Param("year")
-
+	sem := c.Param(":sem")
 	var req []model.CreateTimeTable
 
 	if err := c.BindJSON(&req); err != nil {
@@ -21,7 +21,7 @@ func CreateTimeTable(c *gin.Context) {
 	tx := postgres.DB.Begin()
 	for _, tt := range req {
 		tt.Year = year
-		tt.Sem = "4"
+		tt.Sem = sem
 		if err := tx.Create(&tt).Error; err != nil {
 			tx.Rollback()
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create timetable"})

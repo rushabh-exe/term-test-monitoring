@@ -11,20 +11,26 @@ import (
 
 func GetTeachers(c *gin.Context) {
 	teacherType := c.Param("type")
-	var data []model.Main_Teachers
+	var data any
 
 	tx := postgres.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+			c.JSON(500, gin.H{"error": "Internal Server Error"})
+		}
+	}()
+
 	switch teacherType {
 	case "teachingStaff":
-		// var mainTeachers []model.Main_Teachers
-		if err := tx.Find(&data).Error; err != nil {
+		var mainTeachers []model.Main_Teachers
+		if err := tx.Find(&mainTeachers).Error; err != nil {
 			tx.Rollback()
 			c.JSON(500, gin.H{"error": "Failed to fetch teaching staff"})
 			return
 		}
-		// for _, teacher := range mainTeachers {
-		// 	data = append(data, model.Teachers{Name: teacher.Name, Email: teacher.Email, Phone: teacher.Phone})
-		// }
+		data = mainTeachers
+
 	case "nonteachingStaff":
 		var coTeachers []model.Co_Teachers
 		if err := tx.Find(&coTeachers).Error; err != nil {
@@ -32,16 +38,11 @@ func GetTeachers(c *gin.Context) {
 			c.JSON(500, gin.H{"error": "Failed to fetch non-teaching staff"})
 			return
 		}
-		// for _, teacher := range coTeachers {
-		// 	data = append(data, model.Teachers{Name: teacher.Name, Email: teacher.Email, Phone: teacher.Phone})
-		// }
+		data = coTeachers
+
 	default:
 		c.JSON(400, gin.H{"error": "Invalid teacher type"})
 		return
-	}
-
-	if len(data) < 1 {
-		fmt.Println("data not present")
 	}
 
 	tx.Commit()

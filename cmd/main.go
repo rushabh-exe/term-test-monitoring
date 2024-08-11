@@ -43,7 +43,7 @@ func main() {
 		adminGroup.PUT("/:year/:subject/:class", students.EditAttendence)
 		create := adminGroup.Group("/create")
 		{
-			create.POST("/timetable/:year", admin.CreateTimeTable)
+			create.POST("/timetable/:year/:sem", admin.CreateTimeTable)
 			student := create.Group("/student")
 			{
 				student.POST("/dualAllocation", students.DualAllocation)
