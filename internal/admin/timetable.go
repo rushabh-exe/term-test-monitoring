@@ -10,7 +10,7 @@ import (
 
 func CreateTimeTable(c *gin.Context) {
 	year := c.Param("year")
-	sem := c.Param(":sem")
+	sem := c.Param("sem")
 	var req []model.CreateTimeTable
 
 	if err := c.BindJSON(&req); err != nil {
