@@ -14,7 +14,7 @@ func GetPaperRequests(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in getting paper requests"})
 		return
 	}
-	c.JSON(http.StatusBadRequest, response)
+	c.JSON(http.StatusOK, response)
 }
 
 func GetPaperRequestsStatus(c *gin.Context) {
