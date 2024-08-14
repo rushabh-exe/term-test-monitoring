@@ -17,6 +17,15 @@ func GetPaperRequests(c *gin.Context) {
 	c.JSON(http.StatusBadRequest, response)
 }
 
+func GetPaperRequestsStatus(c *gin.Context) {
+	var response []model.PaperModel
+	if err := postgres.DB.Where("status = ?", false).Find(&response).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in getting paper requests"})
+		return
+	}
+	c.JSON(http.StatusOK, response)
+}
+
 func MakePaperRequests(c *gin.Context) {
 	reqID := c.Param("reqID")
 	req := c.Param("req")

@@ -11,8 +11,8 @@ import (
 func CreateTimeTable(c *gin.Context) {
 	year := c.Param("year")
 	sem := c.Param("sem")
-	var req []model.CreateTimeTable
 
+	var req []model.CreateTimeTable
 	if err := c.BindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
@@ -35,7 +35,6 @@ func CreateTimeTable(c *gin.Context) {
 
 func GetTT(c *gin.Context) {
 	var timetables []model.CreateTimeTable
-
 	if err := postgres.DB.Find(&timetables).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch timetables"})
 		return
@@ -48,7 +47,6 @@ func GetTTbyYear(c *gin.Context) {
 	year := c.Param("Year")
 
 	var timetables []model.CreateTimeTable
-
 	if err := postgres.DB.Where("year = ?", year).Find(&timetables).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch timetables"})
 		return
@@ -61,7 +59,6 @@ func DeleteTimeTable(c *gin.Context) {
 	year := c.Param("year")
 
 	var timetable []model.CreateTimeTable
-
 	tx := postgres.DB.Begin()
 	if err := tx.Where("year = ?", year).Delete(&timetable).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to Delete timetables"})

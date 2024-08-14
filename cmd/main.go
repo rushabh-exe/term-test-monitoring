@@ -76,6 +76,7 @@ func main() {
 			get.GET("/teacher/allocation", teachers.GetTeacherAllocation)
 			get.DELETE("/teacher/allocation/:id", teachers.DeleteTeacherAllocation)
 			get.GET("/teacher/papers", teachers.GetPaperRequests)
+			get.GET("/teacher/papers/request", teachers.GetPaperRequestsStatus)
 		}
 	}
 

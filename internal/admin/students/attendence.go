@@ -18,7 +18,7 @@ func DashboardAttendence(c *gin.Context) {
 	var response []model.Attendence_Models
 	tx := postgres.DB.Begin()
 	if err := tx.Where("year = ? AND subject = ? AND class = ?", year, subject, class).Find(&response).Error; err != nil {
-		fmt.Fprintf(os.Stderr, "Error : \n", err)
+		fmt.Fprintf(os.Stderr, "Error : %v\n", err)
 	}
 	tx.Commit()
 
