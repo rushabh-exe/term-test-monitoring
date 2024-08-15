@@ -45,17 +45,11 @@ func GetReviewbyID(c *gin.Context) {
 }
 
 func MakeReviewRequest(c *gin.Context) {
-	dqcData, exists := c.Get("dqcData")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization data found"})
-		return
-	}
-
-	dqc, ok := dqcData.(model.DQCMembers)
-	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse authorization data"})
-		return
-	}
+	// dqc, err := auth.GetDQC(c)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse authorization data"})
+	// 	return
+	// }
 
 	reqID := c.Param("reqID")
 	req := c.Param("req")
@@ -78,7 +72,7 @@ func MakeReviewRequest(c *gin.Context) {
 	}
 	reviewRequest.Request = rq
 	reviewRequest.Status = true
-	reviewRequest.Approver = dqc.Name
+	reviewRequest.Approver = "DQC"
 
 	if err := tx.Save(&reviewRequest).Error; err != nil {
 		tx.Rollback()
@@ -87,5 +81,5 @@ func MakeReviewRequest(c *gin.Context) {
 	}
 	tx.Commit()
 
-	c.JSON(http.StatusBadRequest, gin.H{"success": "response saved successfully"})
+	c.JSON(http.StatusOK, gin.H{"success": "response saved successfully"})
 }

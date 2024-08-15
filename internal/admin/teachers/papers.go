@@ -56,5 +56,5 @@ func MakePaperRequests(c *gin.Context) {
 	}
 	tx.Commit()
 
-	c.JSON(http.StatusBadRequest, gin.H{"success": "response saved successfully"})
+	c.JSON(http.StatusOK, gin.H{"success": "response saved successfully"})
 }

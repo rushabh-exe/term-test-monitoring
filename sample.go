@@ -202,74 +202,104 @@
 // 	}
 // }
 
+// package main
+
+// import (
+// 	"fmt"
+
+// 	"github.com/hanshal101/term-test-monitor/database/model"
+// 	"github.com/hanshal101/term-test-monitor/database/postgres"
+// )
+
+// func main() {
+// 	postgres.PostgresInitializer()
+// 	fmt.Println("HELLO")
+// 	var students = []model.StudentsDB{
+// 		{Name: "Rajat Nair", RollNo: 1, Email: "rajat.nair@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Tanvi Desai", RollNo: 2, Email: "tanvi.desai@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Aman Mishra", RollNo: 3, Email: "aman.mishra@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Riya Das", RollNo: 4, Email: "riya.das@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Arvind Sen", RollNo: 5, Email: "arvind.sen@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Neha Kapoor", RollNo: 6, Email: "neha.kapoor@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Pranav Reddy", RollNo: 7, Email: "pranav.reddy@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Sanya Iyer", RollNo: 8, Email: "sanya.iyer@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Vikas Kumar", RollNo: 9, Email: "vikas.kumar@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Arjun Bhatt", RollNo: 10, Email: "arjun.bhatt@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Maya Nair", RollNo: 11, Email: "maya.nair@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Karthik Menon", RollNo: 12, Email: "karthik.menon@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Pooja Singh", RollNo: 13, Email: "pooja.singh@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Rohit Mehta", RollNo: 14, Email: "rohit.mehta@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Ishita Sharma", RollNo: 15, Email: "ishita.sharma@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Aditya Rao", RollNo: 16, Email: "aditya.rao@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Nidhi Deshmukh", RollNo: 17, Email: "nidhi.deshmukh@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Vikram Joshi", RollNo: 18, Email: "vikram.joshi@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Ayesha Qureshi", RollNo: 19, Email: "ayesha.qureshi@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Rahul Shah", RollNo: 20, Email: "rahul.shah@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Shruti Agarwal", RollNo: 21, Email: "shruti.agarwal@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Rakesh Patel", RollNo: 22, Email: "rakesh.patel@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Kavya Rao", RollNo: 23, Email: "kavya.rao@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Ishaan Singh", RollNo: 24, Email: "ishaan.singh@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Aditi Sharma", RollNo: 25, Email: "aditi.sharma@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Mohan Gupta", RollNo: 26, Email: "mohan.gupta@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Ananya Menon", RollNo: 27, Email: "ananya.menon@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Vikas Kapoor", RollNo: 28, Email: "vikas.kapoor@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Ritu Jain", RollNo: 29, Email: "ritu.jain@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Rajiv Reddy", RollNo: 30, Email: "rajiv.reddy@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Siddharth Verma", RollNo: 31, Email: "siddharth.verma@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Neeraj Joshi", RollNo: 32, Email: "neeraj.joshi@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Amrita Das", RollNo: 33, Email: "amrita.das@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Amit Patel", RollNo: 34, Email: "amit.patel@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Sneha Reddy", RollNo: 35, Email: "sneha.reddy@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Harsh Sharma", RollNo: 36, Email: "harsh.sharma@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Aarav Gupta", RollNo: 37, Email: "aarav.gupta@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Rekha Shah", RollNo: 38, Email: "rekha.shah@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Krishna Rao", RollNo: 39, Email: "krishna.rao@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Varun Nair", RollNo: 40, Email: "varun.nair@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Priya Kapoor", RollNo: 41, Email: "priya.kapoor@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Sahil Jain", RollNo: 42, Email: "sahil.jain@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Arti Sen", RollNo: 43, Email: "arti.sen@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Nitin Kumar", RollNo: 44, Email: "nitin.kumar@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Surbhi Mehta", RollNo: 45, Email: "surbhi.mehta@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Ashwin Rao", RollNo: 46, Email: "ashwin.rao@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Sneha Desai", RollNo: 47, Email: "sneha.desai@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Nisha Iyer", RollNo: 48, Email: "nisha.iyer@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Vikas Singh", RollNo: 49, Email: "vikas.singh@example.com", Class: "SYB", Department: "EXTC"},
+// 		{Name: "Raj Sharma", RollNo: 50, Email: "raj.sharma@example.com", Class: "SYB", Department: "EXTC"},
+// 	}
+
+// 	if err := postgres.DB.Create(&students).Error; err != nil {
+// 		fmt.Printf("error in students: %v\n", err)
+// 		return
+// 	}
+// 	fmt.Println("DATA SAVED")
+// }
+
 package main
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/hanshal101/term-test-monitor/database/model"
-	"github.com/hanshal101/term-test-monitor/database/postgres"
 )
 
 func main() {
-	postgres.PostgresInitializer()
-	fmt.Println("HELLO")
-	var students = []model.StudentsDB{
-		{Name: "Rajat Nair", RollNo: 1, Email: "rajat.nair@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Tanvi Desai", RollNo: 2, Email: "tanvi.desai@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Aman Mishra", RollNo: 3, Email: "aman.mishra@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Riya Das", RollNo: 4, Email: "riya.das@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Arvind Sen", RollNo: 5, Email: "arvind.sen@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Neha Kapoor", RollNo: 6, Email: "neha.kapoor@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Pranav Reddy", RollNo: 7, Email: "pranav.reddy@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Sanya Iyer", RollNo: 8, Email: "sanya.iyer@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Vikas Kumar", RollNo: 9, Email: "vikas.kumar@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Arjun Bhatt", RollNo: 10, Email: "arjun.bhatt@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Maya Nair", RollNo: 11, Email: "maya.nair@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Karthik Menon", RollNo: 12, Email: "karthik.menon@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Pooja Singh", RollNo: 13, Email: "pooja.singh@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Rohit Mehta", RollNo: 14, Email: "rohit.mehta@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Ishita Sharma", RollNo: 15, Email: "ishita.sharma@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Aditya Rao", RollNo: 16, Email: "aditya.rao@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Nidhi Deshmukh", RollNo: 17, Email: "nidhi.deshmukh@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Vikram Joshi", RollNo: 18, Email: "vikram.joshi@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Ayesha Qureshi", RollNo: 19, Email: "ayesha.qureshi@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Rahul Shah", RollNo: 20, Email: "rahul.shah@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Shruti Agarwal", RollNo: 21, Email: "shruti.agarwal@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Rakesh Patel", RollNo: 22, Email: "rakesh.patel@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Kavya Rao", RollNo: 23, Email: "kavya.rao@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Ishaan Singh", RollNo: 24, Email: "ishaan.singh@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Aditi Sharma", RollNo: 25, Email: "aditi.sharma@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Mohan Gupta", RollNo: 26, Email: "mohan.gupta@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Ananya Menon", RollNo: 27, Email: "ananya.menon@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Vikas Kapoor", RollNo: 28, Email: "vikas.kapoor@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Ritu Jain", RollNo: 29, Email: "ritu.jain@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Rajiv Reddy", RollNo: 30, Email: "rajiv.reddy@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Siddharth Verma", RollNo: 31, Email: "siddharth.verma@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Neeraj Joshi", RollNo: 32, Email: "neeraj.joshi@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Amrita Das", RollNo: 33, Email: "amrita.das@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Amit Patel", RollNo: 34, Email: "amit.patel@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Sneha Reddy", RollNo: 35, Email: "sneha.reddy@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Harsh Sharma", RollNo: 36, Email: "harsh.sharma@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Aarav Gupta", RollNo: 37, Email: "aarav.gupta@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Rekha Shah", RollNo: 38, Email: "rekha.shah@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Krishna Rao", RollNo: 39, Email: "krishna.rao@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Varun Nair", RollNo: 40, Email: "varun.nair@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Priya Kapoor", RollNo: 41, Email: "priya.kapoor@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Sahil Jain", RollNo: 42, Email: "sahil.jain@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Arti Sen", RollNo: 43, Email: "arti.sen@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Nitin Kumar", RollNo: 44, Email: "nitin.kumar@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Surbhi Mehta", RollNo: 45, Email: "surbhi.mehta@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Ashwin Rao", RollNo: 46, Email: "ashwin.rao@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Sneha Desai", RollNo: 47, Email: "sneha.desai@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Nisha Iyer", RollNo: 48, Email: "nisha.iyer@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Vikas Singh", RollNo: 49, Email: "vikas.singh@example.com", Class: "SYB", Department: "EXTC"},
-		{Name: "Raj Sharma", RollNo: 50, Email: "raj.sharma@example.com", Class: "SYB", Department: "EXTC"},
-	}
+	var teacher model.Main_Teachers
+	cookie := "eyJJRCI6NCwiQ3JlYXRlZEF0IjoiMjAyNC0wNy0yNFQxNzo1OTowNi4zMTY1OTcrMDU6MzAiLCJVcGRhdGVkQXQiOiIyMDI0LTA3LTI0VDE3OjU5OjA2LjMxNjU5NyswNTozMCIsIkRlbGV0ZWRBdCI6bnVsbCwibmFtZSI6IkFuaXRhIFJhbyIsImVtYWlsIjoibWVodGEuaGFuc2hhbDEwQGdtYWlsLmNvbSIsInBobm8iOiI2NTQzMjEwOTg3In0="
 
-	if err := postgres.DB.Create(&students).Error; err != nil {
-		fmt.Printf("error in students: %v\n", err)
+	decodedData, err := base64.StdEncoding.DecodeString(cookie)
+	if err != nil {
+		fmt.Println("Error decoding base64 data:", err)
 		return
 	}
-	fmt.Println("DATA SAVED")
+
+	if err := json.Unmarshal([]byte(decodedData), &teacher); err != nil {
+		fmt.Fprintf(os.Stderr, "Error : %v", err)
+		return
+	}
+
+	fmt.Println("name :", teacher.Name)
+	fmt.Println("email:", teacher.Email)
 }

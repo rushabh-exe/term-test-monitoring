@@ -34,8 +34,6 @@ func IsTeacherAuth(c *gin.Context) {
 	}
 	encode := base64.StdEncoding.EncodeToString(jsonData)
 
-	c.SetCookie("teacherData", encode, 10, "/", "", true, true)
-
 	c.JSON(http.StatusOK, authResp{
 		Cookie: encode,
 	})
@@ -50,6 +48,8 @@ func GetTeacher(c *gin.Context) (model.Main_Teachers, error) {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Cookie fetch error"})
 		return teacher, err
 	}
+
+	fmt.Println("Cookie content:", cookie) // Log the cookie content
 
 	decodedData, err := base64.StdEncoding.DecodeString(cookie)
 	if err != nil {

@@ -104,7 +104,7 @@ func main() {
 
 	dqcGroup := r.Group("/dqc")
 	dqcGroup.POST("/login", auth.IsDqcAuth)
-	dqcGroup.Use(middleware.DQCAuthMiddleware())
+	// dqcGroup.Use(middleware.DQCAuthMiddleware())
 	{
 		dqcGroup.GET("/", func(c *gin.Context) { c.String(200, "You are at DQC routes") })
 		dqcGroup.GET("/requests", dqc.GetReviews)
