@@ -25,7 +25,7 @@ func GetReviews(c *gin.Context) {
 
 	var response []model.DQCReview
 	if err := postgres.DB.Find(&response).Error; err != nil {
-		fmt.Println("error: %s", err)
+		fmt.Printf("error: %v\n", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in getting reviews"})
 		return
 	}

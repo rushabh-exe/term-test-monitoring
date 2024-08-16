@@ -274,32 +274,60 @@
 // 	fmt.Println("DATA SAVED")
 // }
 
+// package main
+
+// import (
+// 	"encoding/base64"
+// 	"encoding/json"
+// 	"fmt"
+// 	"os"
+
+// 	"github.com/hanshal101/term-test-monitor/database/model"
+// )
+
+// func main() {
+// 	var teacher model.Main_Teachers
+// 	cookie := "eyJJRCI6NCwiQ3JlYXRlZEF0IjoiMjAyNC0wNy0yNFQxNzo1OTowNi4zMTY1OTcrMDU6MzAiLCJVcGRhdGVkQXQiOiIyMDI0LTA3LTI0VDE3OjU5OjA2LjMxNjU5NyswNTozMCIsIkRlbGV0ZWRBdCI6bnVsbCwibmFtZSI6IkFuaXRhIFJhbyIsImVtYWlsIjoibWVodGEuaGFuc2hhbDEwQGdtYWlsLmNvbSIsInBobm8iOiI2NTQzMjEwOTg3In0="
+
+// 	decodedData, err := base64.StdEncoding.DecodeString(cookie)
+// 	if err != nil {
+// 		fmt.Println("Error decoding base64 data:", err)
+// 		return
+// 	}
+
+// 	if err := json.Unmarshal([]byte(decodedData), &teacher); err != nil {
+// 		fmt.Fprintf(os.Stderr, "Error : %v", err)
+// 		return
+// 	}
+
+// 	fmt.Println("name :", teacher.Name)
+// 	fmt.Println("email:", teacher.Email)
+// }
+
 package main
 
 import (
-	"encoding/base64"
-	"encoding/json"
-	"fmt"
-	"os"
+	"log"
 
-	"github.com/hanshal101/term-test-monitor/database/model"
+	"github.com/wneessen/go-mail"
 )
 
 func main() {
-	var teacher model.Main_Teachers
-	cookie := "eyJJRCI6NCwiQ3JlYXRlZEF0IjoiMjAyNC0wNy0yNFQxNzo1OTowNi4zMTY1OTcrMDU6MzAiLCJVcGRhdGVkQXQiOiIyMDI0LTA3LTI0VDE3OjU5OjA2LjMxNjU5NyswNTozMCIsIkRlbGV0ZWRBdCI6bnVsbCwibmFtZSI6IkFuaXRhIFJhbyIsImVtYWlsIjoibWVodGEuaGFuc2hhbDEwQGdtYWlsLmNvbSIsInBobm8iOiI2NTQzMjEwOTg3In0="
-
-	decodedData, err := base64.StdEncoding.DecodeString(cookie)
+	m := mail.NewMsg()
+	if err := m.From("rishisheshe@outlook.com"); err != nil {
+		log.Fatalf("failed to set From address: %s", err)
+	}
+	if err := m.To("rushabh.mevada@somaiya.edu"); err != nil {
+		log.Fatalf("failed to set To address: %s", err)
+	}
+	m.Subject("This is my first mail with go-mail!")
+	m.SetBodyString(mail.TypeTextPlain, "Do you like this mail? I certainly do!")
+	c, err := mail.NewClient("smtp-mail.outlook.com", mail.WithPort(587), mail.WithSMTPAuth(mail.SMTPAuthLogin),
+		mail.WithUsername("rishisheshe@outlook.com"), mail.WithPassword("rishi@sheshe"))
 	if err != nil {
-		fmt.Println("Error decoding base64 data:", err)
-		return
+		log.Fatalf("failed to create mail client: %s", err)
 	}
-
-	if err := json.Unmarshal([]byte(decodedData), &teacher); err != nil {
-		fmt.Fprintf(os.Stderr, "Error : %v", err)
-		return
+	if err := c.DialAndSend(m); err != nil {
+		log.Fatalf("failed to send mail: %s", err)
 	}
-
-	fmt.Println("name :", teacher.Name)
-	fmt.Println("email:", teacher.Email)
 }

@@ -8,6 +8,7 @@ import (
 	"github.com/hanshal101/term-test-monitor/database/model"
 	"github.com/hanshal101/term-test-monitor/database/postgres"
 	alloc_helper "github.com/hanshal101/term-test-monitor/helpers/alloc_helpers"
+	mailClient "github.com/hanshal101/term-test-monitor/internal/mail"
 	"golang.org/x/exp/rand"
 )
 
@@ -243,4 +244,51 @@ func SelectAvailableCTeacher(t []model.Co_Teachers, hm map[string]int, schedule 
 
 func getRandomNumber(min, max int) int {
 	return rand.Intn(max-min+1) + min
+}
+
+func SendMail(c *gin.Context) {
+	var teacherAllocations []model.TeacherAllocation
+
+	tx := postgres.DB.Begin()
+	if err := tx.Find(&teacherAllocations).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in receiving teacherAllocations"})
+		return
+	}
+
+	// Create a map to store allocations by teacher name
+	teacherMap := make(map[string][]model.TeacherAllocation)
+
+	for _, alloc := range teacherAllocations {
+		teacherMap[alloc.Main_Teacher] = append(teacherMap[alloc.Main_Teacher], alloc)
+	}
+
+	for teacherName, allocations := range teacherMap {
+		var teacher model.Main_Teachers
+		if err := tx.Where("name = ?", teacherName).First(&teacher).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusBadRequest, gin.H{"error": "error in receiving teacher"})
+			return
+		}
+
+		// Prepare the email content
+		msg := fmt.Sprintf("Dear %s,\n\nYou have been allocated the following assignments:\n\n", teacher.Name)
+		htmlContent := fmt.Sprintf("<html><body><p>Dear %s,</p><p>You have been allocated the following assignments:</p><ul>", teacher.Name)
+
+		for _, alloc := range allocations {
+			allocationDetails := fmt.Sprintf(
+				"Classroom: %s, Date: %s, Start Time: %s, End Time: %s",
+				alloc.Classroom, alloc.Date, alloc.Start_Time, alloc.End_Time,
+			)
+			msg += allocationDetails + "\n"
+			htmlContent += fmt.Sprintf("<li>%s</li>", allocationDetails)
+		}
+
+		htmlContent += "</ul><p>Best regards,<br/>Your School Admin</p></body></html>"
+
+		// Send the email
+		mailClient.MailClient(teacher.Name, teacher.Email, msg, htmlContent)
+	}
+
+	tx.Commit()
 }

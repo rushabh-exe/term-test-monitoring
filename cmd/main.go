@@ -52,6 +52,7 @@ func main() {
 			teacher := create.Group("/teacher")
 			{
 				teacher.POST("/allocation", teachers.CreateTeacherAllocation)
+				teacher.POST("/allocation/sendmail", teachers.SendMail)
 				teacher.POST("/papers/:reqID/:req", teachers.MakePaperRequests)
 			}
 			vital := create.Group("/vitals")
