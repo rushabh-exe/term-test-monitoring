@@ -65,6 +65,7 @@ func main() {
 				vital.POST("/createTeacher", vitals.CreateTeacher)
 				vital.PUT("/teachers/:type", vitals.EditTeacher)
 				vital.DELETE("/teachers/:type/:email", vitals.DeleteTeacher)
+				vital.POST("/createAtt", vitals.CreateAttendance)
 			}
 		}
 		get := adminGroup.Group("/get")

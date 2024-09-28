@@ -62,8 +62,13 @@ import (
 
 //		c.JSON(http.StatusOK, result)
 //	}
+
+// 50, 30, 1
 func Allocate(strength int, capacity int, index int) int64 {
 	allocated := min(strength, capacity)
+	if index*capacity+allocated > strength {
+		return int64(strength)
+	}
 	return int64(index*capacity + allocated)
 }
 

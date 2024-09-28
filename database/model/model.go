@@ -133,6 +133,7 @@ type Attendence_Models struct {
 	RollNo     int    `json:"roll_no"`
 	Class      string `json:"class"`
 	IsPresent  bool   `json:"is_present"`
+	Supplement int    `json:"supplement"`
 }
 
 type Subject struct {
@@ -162,18 +163,25 @@ type DQCMembers struct {
 
 type DQCReview struct {
 	gorm.Model
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Subject  string `json:"subject"`
-	Year     string `json:"year"`
-	Semester string `json:"semester"`
-	QPLink   string `json:"qplink"`
-	APLink   string `json:"aplink"`
-	Request  bool   `json:"request"`
-	Status   bool   `json:"status"`
-	Approver string `json:"approver"`
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	Subject     string `json:"subject"`
+	Year        string `json:"year"`
+	Semester    string `json:"semester"`
+	QPLink      string `json:"qplink"`
+	APLink      string `json:"aplink"`
+	Request     bool   `json:"request"`
+	Status      bool   `json:"status"`
+	Approver    string `json:"approver"`
+	Description string `json:"description"`
 }
 
 type EAuthReq struct {
 	Email string `json:"email"`
+}
+
+type AllocationCount struct {
+	gorm.Model
+	Type  string `json:"type"`
+	Count int    `json:"count"`
 }
