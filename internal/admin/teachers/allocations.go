@@ -3,6 +3,7 @@ package teachers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hanshal101/term-test-monitor/database/model"
@@ -80,14 +81,45 @@ func CreateTeacherAllocation(c *gin.Context) {
 		return
 	}
 
+	var teacherStaffCT model.AllocationCount
+	if err := tx.Where("type = ?", "teachingstaff").Find(&teacherStaffCT).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in finding teachers count"})
+		return
+	}
+
+	tsCt, err := strconv.Atoi(teacherStaffCT.Count)
+	if err != nil {
+		fmt.Println("error:", err)
+		return
+	}
+	if tsCt <= 0 {
+		tsCt = 3
+	}
+
+	var nonteacherStaffCT model.AllocationCount
+	if err := tx.Where("type = ?", "nonteachingstaff").Find(&nonteacherStaffCT).Error; err != nil {
+		tx.Rollback()
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in finding teachers count"})
+		return
+	}
+	ntsCt, err := strconv.Atoi(nonteacherStaffCT.Count)
+	if err != nil {
+		fmt.Println("error:", err)
+		return
+	}
+	if ntsCt <= 0 {
+		ntsCt = 3
+	}
+
 	var results []model.TeacherAllocation
 	var mtmap = make(map[string]int)
 	var ctmap = make(map[string]int)
 	for _, teacher := range mainTeachers {
-		mtmap[teacher.Email] = 3
+		mtmap[teacher.Email] = tsCt
 	}
 	for _, teacher := range coTeachers {
-		ctmap[teacher.Email] = 5
+		ctmap[teacher.Email] = ntsCt
 	}
 
 	var subjects []model.CreateTimeTable

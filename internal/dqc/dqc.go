@@ -44,12 +44,23 @@ func GetReviewbyID(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+type desc struct {
+	Description string `json:"description"`
+}
+
 func MakeReviewRequest(c *gin.Context) {
 	// dqc, err := auth.GetDQC(c)
 	// if err != nil {
 	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse authorization data"})
 	// 	return
 	// }
+
+	var description desc
+	if err := c.BindJSON(&description); err != nil {
+		fmt.Println("error:", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in binding"})
+		return
+	}
 
 	reqID := c.Param("reqID")
 	req := c.Param("req")
@@ -73,6 +84,7 @@ func MakeReviewRequest(c *gin.Context) {
 	reviewRequest.Request = rq
 	reviewRequest.Status = true
 	reviewRequest.Approver = "DQC"
+	reviewRequest.Description = description.Description
 
 	if err := tx.Save(&reviewRequest).Error; err != nil {
 		tx.Rollback()

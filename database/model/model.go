@@ -183,5 +183,5 @@ type EAuthReq struct {
 type AllocationCount struct {
 	gorm.Model
 	Type  string `json:"type"`
-	Count int    `json:"count"`
+	Count string `json:"count" gorm:"default:5"`
 }

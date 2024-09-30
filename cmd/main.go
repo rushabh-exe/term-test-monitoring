@@ -1,8 +1,11 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/hanshal101/term-test-monitor/database/model"
 	"github.com/hanshal101/term-test-monitor/database/postgres"
 	migrate "github.com/hanshal101/term-test-monitor/database/postgres/migration"
 	alloc_helper "github.com/hanshal101/term-test-monitor/helpers/alloc_helpers"
@@ -35,6 +38,8 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+	r.GET("/student/timetable", GetTT)
+
 	adminGroup := r.Group("/admin")
 	{
 		adminGroup.GET("/", admin.BaseGET)
@@ -66,6 +71,8 @@ func main() {
 				vital.PUT("/teachers/:type", vitals.EditTeacher)
 				vital.DELETE("/teachers/:type/:email", vitals.DeleteTeacher)
 				vital.POST("/createAtt", vitals.CreateAttendance)
+				vital.GET("/teacherDuties", vitals.GetMaxTeacherAlloc)
+				vital.POST("/teacherDuties", vitals.UpdateMaxTeacherAlloc)
 			}
 		}
 		get := adminGroup.Group("/get")
@@ -120,4 +127,15 @@ func main() {
 
 func Generic(c *gin.Context) {
 	c.JSON(200, gin.H{"message": c.Request.Method})
+}
+
+func GetTT(c *gin.Context) {
+
+	var timetables []model.CreateTimeTable
+	if err := postgres.DB.Find(&timetables).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch timetables"})
+		return
+	}
+
+	c.JSON(http.StatusOK, timetables)
 }
