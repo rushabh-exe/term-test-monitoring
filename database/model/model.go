@@ -133,7 +133,7 @@ type Attendence_Models struct {
 	RollNo     int    `json:"roll_no"`
 	Class      string `json:"class"`
 	IsPresent  bool   `json:"is_present"`
-	Supplement int    `json:"supplement"`
+	Supplement string `json:"supplement"`
 }
 
 type Subject struct {

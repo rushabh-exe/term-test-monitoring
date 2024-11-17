@@ -306,28 +306,28 @@
 
 package main
 
-import (
-	"log"
+// import (
+// 	"log"
 
-	"github.com/wneessen/go-mail"
-)
+// 	"github.com/wneessen/go-mail"
+// )
 
-func main() {
-	m := mail.NewMsg()
-	if err := m.From("rishisheshe@outlook.com"); err != nil {
-		log.Fatalf("failed to set From address: %s", err)
-	}
-	if err := m.To("rushabh.mevada@somaiya.edu"); err != nil {
-		log.Fatalf("failed to set To address: %s", err)
-	}
-	m.Subject("This is my first mail with go-mail!")
-	m.SetBodyString(mail.TypeTextPlain, "Do you like this mail? I certainly do!")
-	c, err := mail.NewClient("smtp-mail.outlook.com", mail.WithPort(587), mail.WithSMTPAuth(mail.SMTPAuthLogin),
-		mail.WithUsername("rishisheshe@outlook.com"), mail.WithPassword("rishi@sheshe"))
-	if err != nil {
-		log.Fatalf("failed to create mail client: %s", err)
-	}
-	if err := c.DialAndSend(m); err != nil {
-		log.Fatalf("failed to send mail: %s", err)
-	}
-}
+// func main() {
+// 	m := mail.NewMsg()
+// 	if err := m.From("rishisheshe@outlook.com"); err != nil {
+// 		log.Fatalf("failed to set From address: %s", err)
+// 	}
+// 	if err := m.To("rushabh.mevada@somaiya.edu"); err != nil {
+// 		log.Fatalf("failed to set To address: %s", err)
+// 	}
+// 	m.Subject("This is my first mail with go-mail!")
+// 	m.SetBodyString(mail.TypeTextPlain, "Do you like this mail? I certainly do!")
+// 	c, err := mail.NewClient("smtp-mail.outlook.com", mail.WithPort(587), mail.WithSMTPAuth(mail.SMTPAuthLogin),
+// 		mail.WithUsername("rishisheshe@outlook.com"), mail.WithPassword("rishi@sheshe"))
+// 	if err != nil {
+// 		log.Fatalf("failed to create mail client: %s", err)
+// 	}
+// 	if err := c.DialAndSend(m); err != nil {
+// 		log.Fatalf("failed to send mail: %s", err)
+// 	}
+// }

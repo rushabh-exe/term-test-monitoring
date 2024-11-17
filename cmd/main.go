@@ -57,6 +57,7 @@ func main() {
 			teacher := create.Group("/teacher")
 			{
 				teacher.POST("/allocation", teachers.CreateTeacherAllocation)
+				teacher.PUT("/allocation/:allocID", teachers.EditAllocation)
 				teacher.POST("/allocation/sendmail", teachers.SendMail)
 				teacher.POST("/papers/:reqID/:req", teachers.MakePaperRequests)
 			}

@@ -3,7 +3,7 @@ package teachers
 import (
 	"fmt"
 	"net/http"
-	"strconv"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/hanshal101/term-test-monitor/database/model"
@@ -81,45 +81,14 @@ func CreateTeacherAllocation(c *gin.Context) {
 		return
 	}
 
-	var teacherStaffCT model.AllocationCount
-	if err := tx.Where("type = ?", "teachingstaff").Find(&teacherStaffCT).Error; err != nil {
-		tx.Rollback()
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error in finding teachers count"})
-		return
-	}
-
-	tsCt, err := strconv.Atoi(teacherStaffCT.Count)
-	if err != nil {
-		fmt.Println("error:", err)
-		return
-	}
-	if tsCt <= 0 {
-		tsCt = 3
-	}
-
-	var nonteacherStaffCT model.AllocationCount
-	if err := tx.Where("type = ?", "nonteachingstaff").Find(&nonteacherStaffCT).Error; err != nil {
-		tx.Rollback()
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error in finding teachers count"})
-		return
-	}
-	ntsCt, err := strconv.Atoi(nonteacherStaffCT.Count)
-	if err != nil {
-		fmt.Println("error:", err)
-		return
-	}
-	if ntsCt <= 0 {
-		ntsCt = 3
-	}
-
 	var results []model.TeacherAllocation
 	var mtmap = make(map[string]int)
 	var ctmap = make(map[string]int)
 	for _, teacher := range mainTeachers {
-		mtmap[teacher.Email] = tsCt
+		mtmap[teacher.Email] = 3
 	}
 	for _, teacher := range coTeachers {
-		ctmap[teacher.Email] = ntsCt
+		ctmap[teacher.Email] = 5
 	}
 
 	var subjects []model.CreateTimeTable
@@ -279,8 +248,20 @@ func getRandomNumber(min, max int) int {
 }
 
 func SendMail(c *gin.Context) {
-	var teacherAllocations []model.TeacherAllocation
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "file upload error"})
+		return
+	}
 
+	filePath := "./uploads/" + file.Filename
+	if err := c.SaveUploadedFile(file, filePath); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "could not save file"})
+		return
+	}
+	defer os.Remove(filePath)
+
+	var teacherAllocations []model.TeacherAllocation
 	tx := postgres.DB.Begin()
 	if err := tx.Find(&teacherAllocations).Error; err != nil {
 		tx.Rollback()
@@ -288,9 +269,7 @@ func SendMail(c *gin.Context) {
 		return
 	}
 
-	// Create a map to store allocations by teacher name
 	teacherMap := make(map[string][]model.TeacherAllocation)
-
 	for _, alloc := range teacherAllocations {
 		teacherMap[alloc.Main_Teacher] = append(teacherMap[alloc.Main_Teacher], alloc)
 	}
@@ -303,24 +282,45 @@ func SendMail(c *gin.Context) {
 			return
 		}
 
-		// Prepare the email content
-		msg := fmt.Sprintf("Dear %s,\n\nYou have been allocated the following assignments:\n\n", teacher.Name)
-		htmlContent := fmt.Sprintf("<html><body><p>Dear %s,</p><p>You have been allocated the following assignments:</p><ul>", teacher.Name)
+		subject := fmt.Sprintf("Assignment Allocations for %s", teacher.Name)
+		body := fmt.Sprintf("Dear %s,\n\nYou have been allocated the following assignments:\n", teacher.Name)
 
 		for _, alloc := range allocations {
-			allocationDetails := fmt.Sprintf(
-				"Classroom: %s, Date: %s, Start Time: %s, End Time: %s",
-				alloc.Classroom, alloc.Date, alloc.Start_Time, alloc.End_Time,
-			)
-			msg += allocationDetails + "\n"
-			htmlContent += fmt.Sprintf("<li>%s</li>", allocationDetails)
+			allocationDetails := fmt.Sprintf("Classroom: %s, Date: %s, Start Time: %s, End Time: %s",
+				alloc.Classroom, alloc.Date, alloc.Start_Time, alloc.End_Time)
+			body += allocationDetails + "\n"
 		}
+		body += "Best regards,\nYour School Admin"
 
-		htmlContent += "</ul><p>Best regards,<br/>Your School Admin</p></body></html>"
-
-		// Send the email
-		mailClient.MailClient(teacher.Name, teacher.Email, msg, htmlContent)
+		// Send the email with the uploaded file as an attachment
+		mailClient.MailClient(teacher.Email, subject, body, filePath)
 	}
 
 	tx.Commit()
+	c.JSON(http.StatusOK, gin.H{"status": "emails sent successfully"})
+}
+
+func EditAllocation(c *gin.Context) {
+	allocID := c.Param("")
+	var req model.TeacherAllocation
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in binding"})
+		return
+	}
+
+	var existAlloc model.TeacherAllocation
+	if err := postgres.DB.Where("id = ?", allocID).First(&existAlloc).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "error in finding the allocation"})
+		return
+	}
+
+	existAlloc.Main_Teacher = req.Main_Teacher
+	existAlloc.Co_Teacher = req.Co_Teacher
+
+	if err := postgres.DB.Save(existAlloc).Error; err != nil {
+		c.JSON(http.StatusBadGateway, gin.H{"error": "error in updating"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": "data saved"})
 }
