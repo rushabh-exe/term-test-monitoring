@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
@@ -20,11 +21,16 @@ import (
 	dqcT "github.com/hanshal101/term-test-monitor/internal/teacher/dqc"
 	"github.com/hanshal101/term-test-monitor/internal/teacher/papers"
 	middleware "github.com/hanshal101/term-test-monitor/middleware/auth"
+	"github.com/joho/godotenv"
 )
 
 func init() {
 	postgres.PostgresInitializer()
 	migrate.Migrate()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 }
 
 func main() {

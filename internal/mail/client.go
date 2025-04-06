@@ -9,18 +9,30 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	gmail "google.golang.org/api/gmail/v1"
 )
 
 var (
-	clientID     = "178350807340-5jfjqhn6ib2evk5bqq4e7jhrg5k9j7v3.apps.googleusercontent.com"
-	clientSecret = "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"
-	refreshToken = "1//0ghPwfAyj1cjrCgYIARAAGBASNwF-L9IrGnMetS2QMnsJ1QVsMjkcnIGryVXq_-9585yICVEArHvR3F1iH1UoYK2nBtp5DMb6f_4"
+	clientID     string
+	clientSecret string
+	refreshToken string
 )
 
+func loadEnvVariables() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+	clientID = os.Getenv("EMAIL_CLIENTID")
+	clientSecret = os.Getenv("EMAIL_CLIENTSECRET")
+	refreshToken = os.Getenv("EMAIL_REFRESHTOKEN")
+}
+
 func getClient() *http.Client {
+	loadEnvVariables()
 	config := &oauth2.Config{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,

@@ -1,0 +1,53 @@
+# Go build artifacts
+/bin/
+/obj/
+/*.exe
+/*.exe~
+/*.out
+/.idea/
+/.vscode/
+
+# Go mod and vendor files
+/go.mod
+/go.sum
+/vendor/
+
+# Dependency directories for Go (example: Go modules)
+go.sum
+go.mod
+
+# Configuration files for specific IDEs
+.idea/
+.vscode/
+
+# Logs and temp files
+*.log
+*.pid
+*.bak
+
+# Environment variables files (like .env)
+.env
+
+# Database files (for example, SQLite)
+*.db
+*.sqlite
+
+# Cover files for testing
+*.out
+
+# Build artifacts from Docker (if you use Docker)
+docker-compose.override.yml
+docker-compose.yml
+
+# Exclude build-related files for CI/CD
+*.tgz
+*.tar.gz
+*.zip
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor backup files
+*~
+*.swp
