@@ -5,7 +5,6 @@ go 1.21.5
 require (
 	github.com/gin-contrib/cors v1.7.1
 	github.com/gin-gonic/gin v1.9.1
-	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
 	golang.org/x/oauth2 v0.23.0
 	google.golang.org/api v0.200.0
 	gorm.io/driver/postgres v1.5.7

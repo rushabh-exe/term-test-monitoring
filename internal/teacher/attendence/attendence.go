@@ -12,68 +12,6 @@ import (
 	"github.com/hanshal101/term-test-monitor/helpers/auth"
 )
 
-// func Test(c *gin.Context) {
-// 	session_cookie, err := c.Cookie("lolTest")
-// 	if err != nil {
-// 		c.JSON(500, gin.H{"error": "Failed to get session cookie"})
-// 		return
-// 	}
-// 	if session_cookie == "" {
-// 		c.JSON(400, gin.H{"error": "No session cookie provided"})
-// 		return
-// 	}
-
-// 	var teacherAlloc []model.TeacherAllocation
-// 	var STAll []model.AllocationResult
-// 	var Students []model.StudentsDB
-// 	var SubjectsTT []model.CreateTimeTable
-// 	var result []map[string]interface{}
-// 	tx := postgres.DB.Begin()
-// 	tx.Where("main_teacher = ?", session_cookie).Find(&teacherAlloc)
-
-// 	fmt.Println(len(teacherAlloc))
-
-// 	for _, arr := range teacherAlloc {
-// 		if err := tx.Where("date = ? AND start_time = ? AND end_time = ?", arr.Date, arr.Start_Time, arr.End_Time).Find(&SubjectsTT).Error; err != nil {
-// 			errorMsg := fmt.Sprintf("Failed to fetch subjects for date %s, start time %s, end time %s: %s", arr.Date, arr.Start_Time, arr.End_Time, err)
-// 			log.Println(errorMsg) // Log the detailed error message
-// 			c.JSON(500, gin.H{"error": "Failed to fetch subjects"})
-// 			return
-// 		}
-// 		teacher_classroom := arr.Classroom
-// 		if err := tx.Where("class_room = ?", teacher_classroom).Find(&STAll).Error; err != nil {
-// 			errorMsg := fmt.Sprintf("Failed to fetch allocation results for classroom %s: %s", teacher_classroom, err)
-// 			log.Println(errorMsg) // Log the detailed error message
-// 			c.JSON(500, gin.H{"error": "Failed to fetch allocation results"})
-// 			return
-// 		}
-
-// 		fmt.Println(len(STAll))
-
-// 		for _, arr2 := range STAll {
-// 			if err := tx.Where("class = ? AND roll_no BETWEEN ? AND ?", arr2.ClassName, arr2.Start, arr2.End).Find(&Students).Error; err != nil {
-// 				errorMsg := fmt.Sprintf("Failed to fetch students for class %s, roll number range %d - %d: %s", arr2.ClassName, arr2.Start, arr2.End, err)
-// 				log.Println(errorMsg) // Log the detailed error message
-// 				c.JSON(500, gin.H{"error": "Failed to fetch students"})
-// 				return
-// 			}
-
-//				data := map[string]interface{}{
-//					"date":         arr.Date,
-//					"start_time":   arr.Start_Time,
-//					"end_time":     arr.End_Time,
-//					"classroom":    arr.Classroom,
-//					"subject":      SubjectsTT,
-//					"allocation":   arr2,
-//					"students":     Students,
-//					"main_teacher": session_cookie,
-//				}
-//				result = append(result, data)
-//			}
-//		}
-//		tx.Commit()
-//		c.JSON(200, result)
-//	}
 type Result struct {
 	Name   string
 	Rollno int
@@ -105,61 +43,6 @@ type SubjectOut struct {
 	Teacher []TeacherOut
 }
 
-// func Test(c *gin.Context) {
-// 	var subject_teacher []model.CreateTimeTable
-// 	var subjectCount []model.CreateTimeTable
-// 	year := "SY"
-// 	if err := postgres.DB.Where("year = ?", year).Find(&subjectCount).Error; err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch main teachers"})
-// 		return
-// 	}
-// 	print(len(subjectCount), "\n")
-
-// 	var syaStudents []model.StudentsDB
-// 	var subjectOut []SubjectOut
-
-// 	for _, perSubAlloc := range subjectCount {
-// 		// var TeacherResult []TeacherOut
-// 		match_date := perSubAlloc.Date
-// 		match_st_time := perSubAlloc.Start_Time
-// 		match_ed_time := perSubAlloc.End_Time
-// 		var TeacherAlloc []model.TeacherAllocation
-// 		if err := postgres.DB.Where("date = ? AND start_time = ? AND end_time = ?", match_date, match_st_time, match_ed_time).Find(&TeacherAlloc).Error; err != nil {
-// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch main teachers"})
-// 			return
-// 		}
-// 		if err := postgres.DB.Where("date = ? AND start_time = ?", match_date, match_st_time).Find(&subject_teacher); err != nil {
-// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch main teachers"})
-// 			return
-// 		}
-
-// 		for _, teacherAlloc := range TeacherAlloc {
-// 			var result []Out
-// 			classRoom := teacherAlloc.Classroom
-// 			var stAlloc []model.AllocationResult
-// 			if err := postgres.DB.Where("class_room = ?", classRoom).Find(&stAlloc).Error; err != nil {
-// 				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch main teachers"})
-// 				return
-// 			}
-// 			for _, allocations := range stAlloc {
-
-// 				if err := postgres.DB.Where("class = ? AND roll_no BETWEEN ? AND ?", allocations.ClassName, allocations.Start, allocations.End).Find(&syaStudents).Error; err != nil {
-// 					c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Failed to fetch %s students", allocations.ClassName)})
-// 					return
-// 				}
-// 				var studentNames []Result
-// 				for _, student := range syaStudents {
-// 					studentNames = append(studentNames, Result{student.Name, student.RollNo})
-// 				}
-// 				result = append(result, Out{Class_Name: allocations.ClassName, Class_Room: allocations.ClassRoom, Students: studentNames})
-// 			}
-// 			// TeacherResult = append(TeacherResult, TeacherOut{Main_Teacher: teacherAlloc.Main_Teacher, Co_Teacher: teacherAlloc.Co_Teacher, Start_Time: teacherAlloc.Start_Time, End_Time: teacherAlloc.End_Time, Out: result, Date: teacherAlloc.Date})
-// 		}
-// 		// subjectOut = append(subjectOut, SubjectOut{Subject: perSubAlloc.Subject, Year: perSubAlloc.Year, Date: perSubAlloc.Date, Teacher: TeacherResult})
-// 	}
-// 	c.JSON(http.StatusOK, subjectOut)
-// }
-
 type ST_Data struct {
 	Subject  string `json:"subject"`
 	Year     string `json:"year"`
@@ -176,58 +59,6 @@ type Result_2 struct {
 	End_Time    string    `json:"end_time"`
 	StudentData []ST_Data `json:"student_data"`
 }
-
-// func Test2(c *gin.Context) {
-// 	teacher_name := "John Doe"
-// 	var student_data []ST_Data
-// 	var teacher_allocations []model.TeacherAllocation
-// 	tx := postgres.DB.Begin()
-// 	if err := tx.Where("main_teacher = ?", teacher_name).Find(&teacher_allocations).Error; err != nil {
-// 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-// 	}
-// 	print(len(teacher_allocations), "\n")
-
-// 	var teacher_timetable []model.CreateTimeTable
-// 	for _, allocations := range teacher_allocations {
-// 		if err := tx.Where("date = ? AND start_time = ? AND end_time = ?", allocations.Date, allocations.Start_Time, allocations.End_Time).Find(&teacher_timetable).Error; err != nil {
-// 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-// 		}
-// 	}
-// 	print(len(teacher_timetable), "\n")
-
-// 	var teacher_st_allocation []model.AllocationResult
-// 	for _, st_allocation := range teacher_allocations {
-// 		if err := tx.Where("class_room = ?", st_allocation.Classroom).Find(&teacher_st_allocation).Error; err != nil {
-// 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-// 		}
-// 	}
-// 	print(len(teacher_st_allocation), "\n")
-
-// 	for _, alloc := range teacher_st_allocation {
-// 		var value map[string]string
-// 		value["SYA"] = "SY"
-// 		value["SYB"] = "SY"
-// 		value["TYA"] = "TY"
-// 		value["TYB"] = "TY"
-// 		value["LYA"] = "LY"
-// 		value["LYB"] = "LY"
-
-// 		var students []model.StudentsDB
-// 		if err := tx.Where("class = ?", alloc.ClassName).Find(&students).Error; err != nil {
-// 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-// 		}
-// 		var data ST_Data
-// 		data = ST_Data{
-// 			// Subject:  subject.Subject,
-// 			// Year:     subject.Year,
-// 			Students: students,
-// 		}
-// 		student_data = append(student_data, data)
-// 	}
-
-// 	tx.Commit()
-
-// }
 
 func Test3(c *gin.Context) {
 	teacher, err := auth.GetTeacher(c)
@@ -314,24 +145,6 @@ func CreateAttendence(c *gin.Context) {
 	if err := c.BindJSON(&attendence_req); err != nil {
 		fmt.Fprintf(os.Stderr, "Error in binding : %v\n", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "error in json format"})
-	}
-	for _, re := range attendence_req {
-		fmt.Println(re.Name, re.IsPresent, re.RollNo)
-	}
-	tx := postgres.DB.Begin()
-	if err := tx.Create(&attendence_req).Error; err != nil {
-		fmt.Fprintf(os.Stderr, "Error in binding : %v\n", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "error in creating attendence"})
-	}
-	tx.Commit()
-	c.JSON(http.StatusCreated, gin.H{"error": "attendence created"})
-}
-
-func EditAttendance(c *gin.Context) {
-	var attendanceReq []model.Attendence_Models
-	if err := c.BindJSON(&attendanceReq); err != nil {
-		fmt.Fprintf(os.Stderr, "Error in binding: %v\n", err)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data"})
 		return
 	}
 
@@ -344,9 +157,10 @@ func EditAttendance(c *gin.Context) {
 		}
 	}()
 
-	for _, req := range attendanceReq {
-		// Define the conditions for updating the record
-		conditions := &model.Attendence_Models{
+	for _, req := range attendence_req {
+		// Check if record already exists
+		var existingRecord model.Attendence_Models
+		conditions := model.Attendence_Models{
 			M_Teacher:  req.M_Teacher,
 			C_Teacher:  req.C_Teacher,
 			Classroom:  req.Classroom,
@@ -358,18 +172,78 @@ func EditAttendance(c *gin.Context) {
 			Name:       req.Name,
 			RollNo:     req.RollNo,
 			Subject:    req.Subject,
-			// Exclude IsPresent field from conditions
 		}
 
-		// Update the IsPresent field without fetching the record
-		if err := tx.Model(&model.Attendence_Models{}).Where(conditions).Update("is_present", req.IsPresent).Error; err != nil {
-			tx.Rollback()
-			fmt.Fprintf(os.Stderr, "Error updating record: %v\n", err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update record"})
-			return
+		result := tx.Where(conditions).First(&existingRecord)
+		if result.Error == nil {
+			// Record exists, update it
+			if err := tx.Model(&existingRecord).Updates(map[string]interface{}{
+				"is_present": req.IsPresent,
+				"supplement": req.Supplement,
+			}).Error; err != nil {
+				tx.Rollback()
+				fmt.Fprintf(os.Stderr, "Error updating record: %v\n", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update record"})
+				return
+			}
+		} else {
+			// Record doesn't exist, create new
+			if err := tx.Create(&req).Error; err != nil {
+				tx.Rollback()
+				fmt.Fprintf(os.Stderr, "Error creating record: %v\n", err)
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create record"})
+				return
+			}
 		}
 	}
 
 	tx.Commit()
-	c.JSON(http.StatusOK, gin.H{"message": "Attendance records updated successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Attendance records processed successfully"})
 }
+
+// func EditAttendance(c *gin.Context) {
+// 	var attendanceReq []model.Attendence_Models
+// 	if err := c.BindJSON(&attendanceReq); err != nil {
+// 		fmt.Fprintf(os.Stderr, "Error in binding: %v\n", err)
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request data"})
+// 		return
+// 	}
+
+// 	tx := postgres.DB.Begin()
+// 	defer func() {
+// 		if r := recover(); r != nil {
+// 			tx.Rollback()
+// 			fmt.Fprintf(os.Stderr, "Error occurred: %v\n", r)
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+// 		}
+// 	}()
+
+// 	for _, req := range attendanceReq {
+// 		// Define the conditions for updating the record
+// 		conditions := &model.Attendence_Models{
+// 			M_Teacher:  req.M_Teacher,
+// 			C_Teacher:  req.C_Teacher,
+// 			Classroom:  req.Classroom,
+// 			Class:      req.Class,
+// 			Year:       req.Year,
+// 			Date:       req.Date,
+// 			Start_Time: req.Start_Time,
+// 			End_Time:   req.End_Time,
+// 			Name:       req.Name,
+// 			RollNo:     req.RollNo,
+// 			Subject:    req.Subject,
+// 			// Exclude IsPresent field from conditions
+// 		}
+
+// 		// Update the IsPresent field without fetching the record
+// 		if err := tx.Model(&model.Attendence_Models{}).Where(conditions).Update("is_present", req.IsPresent).Error; err != nil {
+// 			tx.Rollback()
+// 			fmt.Fprintf(os.Stderr, "Error updating record: %v\n", err)
+// 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update record"})
+// 			return
+// 		}
+// 	}
+
+// 	tx.Commit()
+// 	c.JSON(http.StatusOK, gin.H{"message": "Attendance records updated successfully"})
+// }

@@ -97,7 +97,7 @@ func main() {
 		teacherGroup.GET("/", teacher.BaseGET)
 		teacherGroup.GET("/getAttendence", attendence.Test3)
 		teacherGroup.POST("/getAttendence", attendence.CreateAttendence)
-		teacherGroup.PUT("/getAttendence", attendence.EditAttendance)
+		// teacherGroup.PUT("/getAttendence", attendence.EditAttendance)
 		teacherGroup.GET("/papers", papers.GetPaperRequest)
 		teacherGroup.POST("/papers", papers.CreatePaperRequest)
 		teacherGroup.DELETE("/papers/:reqID", papers.DeletePaperRequest)
