@@ -1,0 +1,37 @@
+# Ignore the Dockerfile itself (if not needed in the build context)
+Dockerfile
+
+# Ignore Go build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+*.a
+*.out
+bin/
+dist/
+
+# Ignore source control files
+.git
+.gitignore
+.gitattributes
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE/Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore environment files (unless needed for Docker builds)
+# .env
+# .env.local
+# *.env
+
+# Ignore logs
+*.log
+logs/
+tmp/
